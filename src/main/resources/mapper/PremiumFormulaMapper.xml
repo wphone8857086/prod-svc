@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.PremiumFormulaMapper">
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.PremiumFormula">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="premium_formula_id" jdbcType="INTEGER" property="premiumFormulaId" />
+    <result column="premium_design" jdbcType="VARCHAR" property="premiumDesign" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="valid_time" jdbcType="TIMESTAMP" property="validTime" />
+    <result column="unvalid_time" jdbcType="TIMESTAMP" property="unvalidTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+  </resultMap>
+</mapper>

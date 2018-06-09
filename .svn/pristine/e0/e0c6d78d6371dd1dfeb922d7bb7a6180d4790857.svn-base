@@ -1,0 +1,15 @@
+package com.jt.product.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.jt.product.entity.Factor;
+import com.jt.product.entity.vo.FactorListVO;
+import com.jt.product.util.MyMapper;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface FactorMapper extends MyMapper<Factor> {
+	List<FactorListVO> findFactorListVOList(@Param("name")String name,@Param("creatBy")String creatBy);
+}

@@ -1,0 +1,24 @@
+package com.jt.plt.product.util;
+
+/**
+* 保费计算状态码
+* @author wephone
+* @create 2018-05-03 11:34
+**/
+public class FormulaCode {
+    public final static String BASIC = "basic";
+
+    public final static String ATION = "ation";
+
+    public final static String A = "a";
+
+    public final static int CODE1 = 1;
+    /**
+     * 调整系数为0参数值
+     */
+    public final static Double COEF = 5972.0;
+
+    public final static String STATUS_CODE_3 = "3";
+
+    public final static String STATUS_CODE_1 = "1";
+}

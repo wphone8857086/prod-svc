@@ -1,0 +1,73 @@
+package com.jt.plt.product.dto;
+
+
+import java.util.List;
+
+ /**
+  * 描述：责任列表数据类
+  * 类名称：LiabilityDTO
+  * 作者： wangyang
+  * 版本：1.0
+  * 修改：
+  * 创建日期：
+  * 版权：江泰保险经纪股份有限公司
+  */
+/*
+id: 责任ID,
+name: 责任名称,
+riskInfoId: 险种ID,
+limitList: [{
+*/
+public class LiabilityDTO {
+    /**
+     * 责任ID
+     */
+    private String id;
+
+    /**
+     * 责任名称
+     */
+    private String name;
+
+    /**
+     * 险种ID
+     */
+    private String riskInfoId;
+
+    /**
+     * 限额列表
+     */
+    private List<LimitDTO> limitList;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getRiskInfoId() {
+		return riskInfoId;
+	}
+
+	public void setRiskInfoId(String riskInfoId) {
+		this.riskInfoId = riskInfoId;
+	}
+
+	public List<LimitDTO> getLimitList() {
+		return limitList;
+	}
+
+	public void setLimitList(List<LimitDTO> limitList) {
+		this.limitList = limitList;
+	}
+}

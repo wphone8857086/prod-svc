@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.BasicPremiumFactorMapper">
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.BasicPremiumFactor">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="rela_id" jdbcType="VARCHAR" property="relaId" />
+    <result column="product_program_id" jdbcType="VARCHAR" property="productProgramId" />
+    <result column="Liability_id" jdbcType="VARCHAR" property="liabilityId" />
+    <result column="limit_values_id" jdbcType="VARCHAR" property="limitValuesId" />
+    <result column="factor_id" jdbcType="VARCHAR" property="factorId" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="insurance_program_product_rela_id" jdbcType="INTEGER" property="insuranceProgramProductRelaId" />
+  </resultMap>
+</mapper>

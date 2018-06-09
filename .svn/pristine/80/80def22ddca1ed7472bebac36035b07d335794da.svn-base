@@ -1,0 +1,57 @@
+package com.jt.plt.product.util;
+
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+import java.math.BigDecimal;
+
+
+public class CalculateLossFactor{
+	private  JSONArray jsonArray;
+
+
+	public JSONArray getJsonArray() {
+		return jsonArray;
+	}
+
+	public void setJsonArray(JSONArray jsonArray) {
+		this.jsonArray = jsonArray;
+	}
+
+	//single case calculate
+	private BigDecimal calculateLossRationFactor(JSONObject json) {
+		System.out.println(json);
+		if(!json.get("endcasetype").equals("")){
+			if ("00".equals(json.get("endcasetype"))) {
+				return new BigDecimal(json.get("caseamount").toString());
+			} else {
+				return new BigDecimal(0);
+			}
+		}else {
+			if(!json.get("fixamount").toString().equals("0")) {
+				return new BigDecimal(json.get("fixamount").toString());
+			}else {
+					if (!json.get("evelamount").toString().equals("0")) {
+						return new BigDecimal(json.get("evelamount").toString());
+					}else {
+						if (!json.get("loss").toString().equals("0")) {
+							return new BigDecimal( json.get("loss").toString());
+						}else {
+							return new BigDecimal(0);
+						}
+					}
+				  }
+		}
+	}
+
+	//sum Loss
+	public BigDecimal calculateSumLossRationFactor(){
+		BigDecimal sum= new BigDecimal(0);
+		for(int i=0;i<jsonArray.size();i++){
+			sum = sum.add(calculateLossRationFactor(JSONObject.fromObject(jsonArray.get(i))));
+			System.out.println("每次sum的值:"+sum);
+		}
+		return sum;
+	}
+}

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.ProductInfoMapper">
+	<resultMap id="BaseResultMap" type="com.jt.plt.product.entity.ProductInfo">
+		<!-- WARNING - @mbg.generated -->
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="product_code" jdbcType="VARCHAR" property="productCode" />
+		<result column="product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="product_desc" jdbcType="VARCHAR" property="productDesc" />
+		<result column="product_risk_class_id" jdbcType="VARCHAR"
+			property="productRiskClassId" />
+		<result column="product_premium_type" jdbcType="INTEGER"
+			property="productPremiumType" />
+		<result column="product_premium" jdbcType="REAL" property="productPremium" />
+		<result column="product_desgin_id" jdbcType="VARCHAR" property="productDesginId" />
+		<result column="product_status" jdbcType="VARCHAR" property="productStatus" />
+		<result column="product_channel_code" jdbcType="VARCHAR"
+			property="productChannelCode" />
+		<result column="product_channel_name" jdbcType="VARCHAR"
+			property="productChannelName" />
+		<result column="premium_formula_id"
+			jdbcType="INTEGER" property="premiumFormulaId" />
+		<result column="deductible_info_no" jdbcType="INTEGER"
+			property="deductibleInfoNo" />
+		<result column="special_clause_code" jdbcType="INTEGER"
+			property="specialClauseClauseCode" />
+	</resultMap>
+
+	<select id="selectByProductCode" resultMap="BaseResultMap">
+    	SELECT
+    	product_code,
+    	product_name,
+    	product_desc,
+    	product_risk_class_id,
+    	product_premium_type,
+    	product_premium,
+    	product_desgin_id,
+    	product_status,
+    	product_channel_code,
+    	product_channel_name,
+    	premium_formula_id,
+    	deductible_info_no,
+    	special_clause_code
+		FROM t_product_info
+		WHERE product_code = #{productCode};
+    </select>
+</mapper>

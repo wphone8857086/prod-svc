@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.LiabilityLimitRelaMapper">
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.LiabilityLimitRela">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="rela_id" jdbcType="INTEGER" property="relaId" />
+    <id column="liability_limit_limit_id" jdbcType="VARCHAR" property="liabilityLimitLimitId" />
+    <id column="liability_limit_values_limit_values_id" jdbcType="VARCHAR" property="liabilityLimitValuesLimitValuesId" />
+    <result column="product_program_id" jdbcType="VARCHAR" property="productProgramId" />
+    <result column="program_name" jdbcType="VARCHAR" property="programName" />
+    <result column="liability_id" jdbcType="VARCHAR" property="liabilityId" />
+    <result column="liability_name" jdbcType="VARCHAR" property="liabilityName" />
+    <result column="limit_id" jdbcType="VARCHAR" property="limitId" />
+    <result column="limit_name" jdbcType="VARCHAR" property="limitName" />
+    <result column="limit_values_id" jdbcType="VARCHAR" property="limitValuesId" />
+    <result column="limit_values" jdbcType="VARCHAR" property="limitValues" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="insurance_Liability_group_Liability_group_id" jdbcType="VARCHAR" property="insuranceLiabilityGroupLiabilityGroupId" />
+    <result column="insurance_Liability_group_t_insurance_Liability_Liability_id" jdbcType="INTEGER" property="insuranceLiabilityGroupTInsuranceLiabilityLiabilityId" />
+    <result column="insurance_program_product_rela_id" jdbcType="INTEGER" property="insuranceProgramProductRelaId" />
+  </resultMap>
+</mapper>

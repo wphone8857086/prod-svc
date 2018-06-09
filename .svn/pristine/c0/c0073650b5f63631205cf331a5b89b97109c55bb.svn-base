@@ -1,0 +1,333 @@
+package com.jt.product.service;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.jt.product.entity.formula.FormulaBean;
+import com.jt.product.enums.ResultEnum;
+import com.jt.product.service.productInfo.FormulaService;
+import com.jt.product.util.JsonUtil;
+import com.jt.product.util.ResultMsg;
+import com.jt.product.util.ReturnCode;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 保费计算单元测试
+ *
+ * @author wephone
+ * @create 2018-04-27 17:19
+ **/
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@ComponentScan
+public class PremiumTest {
+
+    /**
+     * 1、参保人数变为份数 count     √
+     * 2、把浮动方案id 提取出来      √
+     * 3、去循环                     √
+     * 4、常量单独提取 便于日后优化  √
+     * 5、可读性
+     */
+
+    private final Logger log = LoggerFactory.getLogger(PremiumTest.class);
+
+    @Autowired
+    FormulaService formulaService;
+
+    /**
+     * 固定保费测试
+     */
+    @Test
+    public void test() {
+        long startTime=System.currentTimeMillis();
+        String str = "{\n" +
+                "    \"count\": 1,\n" +
+                "    \"productCode\": \"WF-001002\",\n" +
+                "    \"basicPremium\": 3000,\n" +
+                "    \"factorInfos\": [{\n" +
+                "        \"factorRelaId\": 1001,\n" +
+                "        \"stringFactor\": \"30\"\n" +
+                "    },\n" +
+                "        {\n" +
+                "            \"factorRelaId\": 1004,\n" +
+                "            \"stringFactor\": \"60\"\n" +
+                "        },\n" +
+                "        \n" +
+                "        {\n" +
+                "            \"factorRelaId\": 1005,\n" +
+                "            \"stringFactor\": \"150\"\n" +
+                "        }],\n" +
+                "    \"additionPremium\": 1000,\n" +
+                "    \"additionFactorInfos\": [\n" +
+                "       {\n" +
+                "         \"factorRelaId\": 2051,\n" +
+                "         \"stringFactor\": \"6500\"\n" +
+                "     },\n" +
+                "         {\n" +
+                "             \"factorRelaId\": 2052,\n" +
+                "             \"stringFactor\": \"1001\"\n" +
+                "         }]\n" +
+                "}";
+
+        FormulaBean formulaBean = null;
+        try {
+            formulaBean = JsonUtil.json2Object(str, FormulaBean.class);
+            if (formulaBean == null) {
+                log.error(ResultEnum.PARAM_ERROR.getMessage());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(ResultEnum.PARAM_ERROR.getMessage());
+        }
+        ResultMsg resultMsg = formulaService.countPremium(formulaBean);
+        System.out.println(resultMsg.getMsg());
+        long endTime=System.currentTimeMillis();
+        System.out.println("当前程序耗时："+(endTime-startTime)+"ms");
+
+        //  ******总保费******：724.50
+    }
+
+    @Test
+    public void test2() {
+        long startTime=System.currentTimeMillis();
+        String str = "[{\n" +
+                "    \"count\": 1,\n" +
+                "    \"productCode\": \"WF-001002\",\n" +
+                "    \"basicPremium\": 3000,\n" +
+                "    \"factorInfos\": [{\n" +
+                "        \"factorRelaId\": 1001,\n" +
+                "        \"stringFactor\": \"30\"\n" +
+                "    },\n" +
+                "        {\n" +
+                "            \"factorRelaId\": 1004,\n" +
+                "            \"stringFactor\": \"60\"\n" +
+                "        },\n" +
+                "        \n" +
+                "        {\n" +
+                "            \"factorRelaId\": 1005,\n" +
+                "            \"stringFactor\": \"150\"\n" +
+                "        }],\n" +
+                "    \"additionPremium\": 1000,\n" +
+                "    \"additionFactorInfos\": [\n" +
+                "       {\n" +
+                "         \"factorRelaId\": 2051,\n" +
+                "         \"stringFactor\": \"6500\"\n" +
+                "     },\n" +
+                "         {\n" +
+                "             \"factorRelaId\": 2052,\n" +
+                "             \"stringFactor\": \"1001\"\n" +
+                "         }]\n" +
+                "},{\n" +
+                "    \"count\": 1,\n" +
+                "    \"productCode\": \"WF-001002\",\n" +
+                "    \"basicPremium\": 3000,\n" +
+                "    \"factorInfos\": [{\n" +
+                "        \"factorRelaId\": 1001,\n" +
+                "        \"stringFactor\": \"30\"\n" +
+                "    },\n" +
+                "        {\n" +
+                "            \"factorRelaId\": 1004,\n" +
+                "            \"stringFactor\": \"60\"\n" +
+                "        },\n" +
+                "        \n" +
+                "        {\n" +
+                "            \"factorRelaId\": 1005,\n" +
+                "            \"stringFactor\": \"150\"\n" +
+                "        }],\n" +
+                "    \"additionPremium\": 1000,\n" +
+                "    \"additionFactorInfos\": [\n" +
+                "       {\n" +
+                "         \"factorRelaId\": 2051,\n" +
+                "         \"stringFactor\": \"6500\"\n" +
+                "     },\n" +
+                "         {\n" +
+                "             \"factorRelaId\": 2052,\n" +
+                "             \"stringFactor\": \"1001\"\n" +
+                "         }]\n" +
+                "}]";
+
+        List<FormulaBean> formulaBeans = new ArrayList<>();
+        try {
+            formulaBeans = JsonUtil.json2Object(str, new TypeReference<List<FormulaBean>>() {
+            });
+            if (formulaBeans == null || formulaBeans.size() == ReturnCode.CODE0) {
+                log.error(ResultEnum.PARAM_ERROR.getMessage());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(ResultEnum.PARAM_ERROR.getMessage());
+        }
+        System.out.println(formulaService.countPremiums(formulaBeans).getMsg());
+        long endTime=System.currentTimeMillis();
+        System.out.println("当前程序耗时："+(endTime-startTime)+"ms");
+    }
+
+    /**
+     * 单_浮动保费测试
+     */
+    @Test
+    public void test3(){
+        long startTime=System.currentTimeMillis();
+
+        String str = "{\"count\": 1,\n" +
+                "\"productCode\": \"WF-001002\",\n" +
+                "\"basicPremium\":2000,\n" +
+                "\"progId\": \"WF_51\",\n" +
+                "\"floatPremiums\": [{\n" +
+                "\"liabilityLimitValuesId\": 178,\n" +
+                "\"liabilityLimitValues\":500000    \n" +
+                "},\n" +
+                "{\"liabilityLimitValuesId\": 171},\n" +
+                "{\"liabilityLimitValuesId\": 170},\n" +
+                "{\"liabilityLimitValuesId\": 174}],\n" +
+                "\"factorInfos\": [{\n" +
+                "\"factorRelaId\": 1001,\n" +
+                "\"stringFactor\": \"30\"\n" +
+                "},\n" +
+                "{\n" +
+                "\"factorRelaId\": 1004,\n" +
+                "\"stringFactor\": \"60\"\n" +
+                "},{\n" +
+                "\"factorRelaId\": 1005,\n" +
+                "\"stringFactor\": \"150\"\n" +
+                "}],\n" +
+                "\"additionPremium\":1000,\n" +
+                "\"ationProgId\": \"WF_51\",\n" +
+                "\"additionFloatPremiums\":[\n" +
+                "{\"liabilityLimitValuesId\": 178,\n" +
+                "\"liabilityLimitValues\":500000    \n" +
+                "},\n" +
+                "{\"liabilityLimitValuesId\": 171},\n" +
+                "{\"liabilityLimitValuesId\": 170}],\n" +
+                "\"additionFactorInfos\":[{\n" +
+                "\"factorRelaId\":2051,\n" +
+                "\"stringFactor\":6500\n" +
+                "},{\"factorRelaId\":2052,\n" +
+                "\"stringFactor\":1001}]\n" +
+                "}";
+         FormulaBean formulaBean = null;
+        try {
+            formulaBean = JsonUtil.json2Object(str, FormulaBean.class);
+            if (formulaBean == null) {
+                log.error(ResultEnum.PARAM_ERROR.getMessage());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(ResultEnum.PARAM_ERROR.getMessage());
+        }
+        ResultMsg resultMsg = formulaService.countPremium(formulaBean);
+        System.out.println(resultMsg.getMsg());
+        long endTime=System.currentTimeMillis();
+        System.out.println("当前程序耗时："+(endTime-startTime)+"ms");
+
+        // ******总保费******：5496.30
+
+        // old  当前程序耗时：555ms
+        // new  当前程序耗时：577ms
+
+    }
+    @Test
+    public void test4(){
+        long startTime=System.currentTimeMillis();
+        String str ="[{\"count\": 1,\n" +
+                "\"productCode\": \"WF-001002\",\n" +
+                "\"basicPremium\":2000,\n" +
+                "\"progId\": \"WF_51\",\n" +
+                "\"floatPremiums\": [{\n" +
+                "\"liabilityLimitValuesId\": 178,\n" +
+                "\"liabilityLimitValues\":500000    \n" +
+                "},\n" +
+                "{\"liabilityLimitValuesId\": 171},\n" +
+                "{\"liabilityLimitValuesId\": 170},\n" +
+                "{\"liabilityLimitValuesId\": 174}],\n" +
+                "\"factorInfos\": [{\n" +
+                "\"factorRelaId\": 1001,\n" +
+                "\"stringFactor\": \"30\"\n" +
+                "},\n" +
+                "{\n" +
+                "\"factorRelaId\": 1004,\n" +
+                "\"stringFactor\": \"60\"\n" +
+                "},{\n" +
+                "\"factorRelaId\": 1005,\n" +
+                "\"stringFactor\": \"150\"\n" +
+                "}],\n" +
+                "\"additionPremium\":1000,\n" +
+                "\"ationProgId\": \"WF_51\",\n" +
+                "\"additionFloatPremiums\":[\n" +
+                "{\"liabilityLimitValuesId\": 178,\n" +
+                "\"liabilityLimitValues\":500000    \n" +
+                "},\n" +
+                "{\"liabilityLimitValuesId\": 171},\n" +
+                "{\"liabilityLimitValuesId\": 170}],\n" +
+                "\"additionFactorInfos\":[{\n" +
+                "\"factorRelaId\":2051,\n" +
+                "\"stringFactor\":6500\n" +
+                "},{\"factorRelaId\":2052,\n" +
+                "\"stringFactor\":1001}]\n" +
+                "},{\"count\": 1,\n" +
+                "\"productCode\": \"WF-001002\",\n" +
+                "\"basicPremium\":2000,\n" +
+                "\"progId\": \"WF_51\",\n" +
+                "\"floatPremiums\": [{\n" +
+                "\"liabilityLimitValuesId\": 178,\n" +
+                "\"liabilityLimitValues\":500000    \n" +
+                "},\n" +
+                "{\"liabilityLimitValuesId\": 171},\n" +
+                "{\"liabilityLimitValuesId\": 170},\n" +
+                "{\"liabilityLimitValuesId\": 174}],\n" +
+                "\"factorInfos\": [{\n" +
+                "\"factorRelaId\": 1001,\n" +
+                "\"stringFactor\": \"30\"\n" +
+                "},\n" +
+                "{\n" +
+                "\"factorRelaId\": 1004,\n" +
+                "\"stringFactor\": \"60\"\n" +
+                "},{\n" +
+                "\"factorRelaId\": 1005,\n" +
+                "\"stringFactor\": \"150\"\n" +
+                "}],\n" +
+                "\"additionPremium\":1000,\n" +
+                "\"ationProgId\": \"WF_51\",\n" +
+                "\"additionFloatPremiums\":[\n" +
+                "{\"liabilityLimitValuesId\": 178,\n" +
+                "\"liabilityLimitValues\":500000    \n" +
+                "},\n" +
+                "{\"liabilityLimitValuesId\": 171},\n" +
+                "{\"liabilityLimitValuesId\": 170}],\n" +
+                "\"additionFactorInfos\":[{\n" +
+                "\"factorRelaId\":2051,\n" +
+                "\"stringFactor\":6500\n" +
+                "},{\"factorRelaId\":2052,\n" +
+                "\"stringFactor\":1001}]\n" +
+                "}]";
+         List<FormulaBean> formulaBeans = new ArrayList<>();
+        try {
+            formulaBeans = JsonUtil.json2Object(str, new TypeReference<List<FormulaBean>>() {
+            });
+            if (formulaBeans == null || formulaBeans.size() == ReturnCode.CODE0) {
+                log.error(ResultEnum.PARAM_ERROR.getMessage());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(ResultEnum.PARAM_ERROR.getMessage());
+        }
+        System.out.println(formulaService.countPremiums(formulaBeans).getMsg());
+         long endTime=System.currentTimeMillis();
+        System.out.println("当前程序耗时："+(endTime-startTime)+"ms");
+
+        // ******总保费******：10992.60  new
+        // 当前程序耗时：714ms           new
+        // 当前程序耗时：647ms          new+1
+        // 当前程序耗时：674ms          reids
+    }
+
+}

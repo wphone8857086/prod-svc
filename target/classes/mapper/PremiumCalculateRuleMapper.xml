@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jt.product.mapper.PremiumCalculateRuleMapper" >
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.PremiumCalculateRule" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="calculate_rule_id" property="calculateRuleId" jdbcType="INTEGER" />
+    <result column="product_code" property="productCode" jdbcType="VARCHAR" />
+    <result column="calculate_rule_name" property="calculateRuleName" jdbcType="VARCHAR" />
+    <result column="calculate_rule_para" property="calculateRulePara" jdbcType="VARCHAR" />
+    <result column="calculate_rule_para_des" property="calculateRuleParaDes" jdbcType="VARCHAR" />
+    <result column="condition_flag" property="conditionFlag" jdbcType="VARCHAR" />
+    <result column="calculate_rule_values" property="calculateRuleValues" jdbcType="VARCHAR" />
+    <result column="calculate_rule_formula" property="calculateRuleFormula" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+</mapper>

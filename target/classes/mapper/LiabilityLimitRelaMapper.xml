@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.LiabilityLimitRelaMapper">
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.LiabilityLimitRela">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="program_code" jdbcType="VARCHAR" property="programCode" />
+    <result column="program_name" jdbcType="VARCHAR" property="programName" />
+    <result column="liability_code" jdbcType="VARCHAR" property="liabilityCode" />
+    <result column="liability_name" jdbcType="VARCHAR" property="liabilityName" />
+    <result column="limit_code" jdbcType="VARCHAR" property="limitCode" />
+    <result column="limit_name" jdbcType="VARCHAR" property="limitName" />
+    <result column="limit_values_code" jdbcType="VARCHAR" property="limitValuesCode" />
+    <result column="limit_values" jdbcType="VARCHAR" property="limitValues" />
+    <result column="calculation_type" jdbcType="VARCHAR" property="status" />
+    <result column="status" jdbcType="VARCHAR" property="calculationType" />
+    <result column="premium" jdbcType="DOUBLE" property="premium" />
+  </resultMap>
+
+  <select id="findLimitRela" parameterType="Map" resultMap="BaseResultMap">
+
+    select * from t_liability_limit_rela
+    where program_code=#{progId} and limit_values_code=#{limitValuesId}
+
+  </select>
+  <select id="selectByProgramCode" resultMap="BaseResultMap">
+  	SELECT
+		id,
+		program_code,
+		program_name,
+		liability_code,
+		liability_name,
+		limit_code,
+		limit_name,
+		limit_values_code,
+		limit_values,
+		calculation_type,
+		status,
+		premium
+	FROM 
+		t_liability_limit_rela
+	WHERE program_code=#{programCode}
+  </select>
+</mapper>

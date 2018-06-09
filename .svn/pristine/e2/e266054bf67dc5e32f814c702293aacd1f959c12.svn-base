@@ -1,0 +1,90 @@
+package com.jt.plt.product.util;
+
+/**
+* 保费计算状态码
+* @author wephone
+* @create 2018-05-03 11:34
+**/
+public class FormulaCode {
+     public static final String product = "prod:";
+
+    public static String keyProdu = null;
+
+    public static String keyProgram = null;
+
+    public static String keyInfare = null;
+
+    public static String keyPrefor = null;
+
+    public static String keyFloatRate = null;
+
+    public static String keyFloatRateAtion = null;
+
+    public static String keyConf = null;
+
+    public static String keyProgramAtion = null;
+
+    public static String keyPrcare = null;
+
+
+    public static String keyLimitValues = null;
+
+    public static String keyLimitValuesAtion = null;
+
+
+
+
+    public final static String BASIC = "basic";
+
+    public final static String ATION = "ation";
+    public final static String ATION1 = "ation1";
+    public final static String ATION2 = "ation2";
+
+
+    /**
+     * 赔付率因子参与计算代码值
+     */
+    public final  static String LOSSFACTORPARAM = "factor_440";
+      /**
+     * 赔付率因子编码
+     */
+    public final  static String LOSSFACTORCODE = "440";
+
+    /**
+     * 优惠率因子编码
+     */
+    public final static String DISCOUNTFACTORCODE = "441";
+
+    /**
+     * 优惠率因子参与计算代码值
+     */
+     public final  static String  DISCOUNTFACTORPARAM = "factor_441";
+
+    public final static String A = "a";
+
+    public final static String R = "R";
+
+
+    public final static int CODE1 = 1;
+
+    public final static int START_200 = 200;
+
+    public final static int RENEWAL_0 =0 ;
+    public final static int RENEWAL_1 =1 ;
+    public final static int RENEWAL_2 =2 ;
+
+
+    /**
+     * 调整系数为0参数值
+     */
+    public final static Double COEF = 5972.0;
+
+
+
+    public final static  String STATUS_0="0";
+
+    public final static  String STATUS_1="1";
+
+    public final static String TYPE_3 = "3";
+    public final static String TYPE_4 = "4";
+}

@@ -1,0 +1,14 @@
+server:
+    port: 7652
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://10.30.131.42/jtproducts?characterEncoding=utf-8
+    hikari:
+      username: jtproducts
+      password: "@2018#"
+      driver-class-name: com.mysql.jdbc.Driver
+      minimum-idle: 1
+      maximum-pool-size: 5
+      pool-name: dbcp1
+      connection-test-query: select 1

@@ -1,0 +1,163 @@
+package com.jt.plt.product.entity.calPremium;
+/**   
+ * 描述：保费计算公式接收值定义对象
+ * 作者： wephone   
+ * 创建日期： 2018年3月8日 下午1:54:58
+ * 版权：江泰保险经纪股份有限公司
+ */
+
+import java.math.BigDecimal;
+import java.util.List;
+
+public class FormulaBean {
+
+
+	/**
+	 * 参保份数
+	 */
+	private BigDecimal count;
+
+	private BigDecimal numberOfPeople;
+
+	/**
+	 * 产品编码
+	 */
+	private String productCode;
+
+	/**
+	 * 主险保费
+	 */
+   private BigDecimal basicPremium;
+
+	/**
+	 * 主险浮动保费
+	 */
+	private List<FloatPremium> floatPremiums;
+
+	/**
+	 * 主险浮动方案ID
+	 */
+    private String progId;
+	/**
+	 * 附加险 浮动方案ID
+	 */
+	private String ationProgId;
+
+	/**
+	 * 主险因子信息对象
+	 */
+	private  List<FactorInfo> factorInfos;
+
+	/**
+	 * 附加险基础保费
+	 */
+	private BigDecimal additionPremium;
+
+	/**
+	 * 附加险浮动保费
+	 */
+	private List<FloatPremium> additionFloatPremiums;
+
+	/**
+	 * 附加险因子对象
+	 */
+	private List<FactorInfo> additionFactorInfos;
+
+	/**
+     *
+    * 描述：构造函数
+    * 名称：FormulaBean.java
+     */
+    public FormulaBean() {
+    }
+
+	public BigDecimal getNumberOfPeople() {
+		return numberOfPeople;
+	}
+
+	public void setNumberOfPeople(BigDecimal numberOfPeople) {
+		this.numberOfPeople = numberOfPeople;
+	}
+
+	public String getProgId() {
+		return progId;
+	}
+
+	public void setProgId(String progId) {
+		this.progId = progId;
+	}
+
+	public String getAtionProgId() {
+		return ationProgId;
+	}
+
+	public void setAtionProgId(String ationProgId) {
+		this.ationProgId = ationProgId;
+	}
+
+	public BigDecimal getBasicPremium() {
+		return basicPremium;
+	}
+
+	public void setBasicPremium(BigDecimal basicPremium) {
+		this.basicPremium = basicPremium;
+	}
+
+	public List<FloatPremium> getAdditionFloatPremiums() {
+		return additionFloatPremiums;
+	}
+
+	public void setAdditionFloatPremiums(List<FloatPremium> additionFloatPremiums) {
+		this.additionFloatPremiums = additionFloatPremiums;
+	}
+
+	public List<FactorInfo> getAdditionFactorInfos() {
+		return additionFactorInfos;
+	}
+
+	public void setAdditionFactorInfos(List<FactorInfo> additionFactorInfos) {
+		this.additionFactorInfos = additionFactorInfos;
+	}
+
+	public String getProductCode() {
+		return productCode;
+	}
+
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+
+	public BigDecimal getCount() {
+		return count;
+	}
+
+	public void setCount(BigDecimal count) {
+		this.count = count;
+	}
+
+	public List<FloatPremium> getFloatPremiums() {
+		return floatPremiums;
+	}
+	public void setFloatPremiums(List<FloatPremium> floatPremiums) {
+		this.floatPremiums = floatPremiums;
+	}
+
+
+	public BigDecimal getAdditionPremium() {
+		return additionPremium;
+	}
+
+	public void setAdditionPremium(BigDecimal additionPremium) {
+		this.additionPremium = additionPremium;
+	}
+
+	public List<FactorInfo> getFactorInfos() {
+		return factorInfos;
+	}
+	public void setFactorInfos(List<FactorInfo> factorInfos) {
+		this.factorInfos = factorInfos;
+	}
+
+
+
+}

@@ -1,0 +1,786 @@
+package com.jt.plt.product.service.api.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.jt.plt.product.dto.Factor;
+import com.jt.plt.product.dto.InusureCompanyDTO;
+import com.jt.plt.product.dto.ProductInfoDTO;
+import com.jt.plt.product.dto.program.LiabilityGroupBean;
+import com.jt.plt.product.dto.program.LiabilityInfoBean;
+import com.jt.plt.product.dto.program.LimitInfoBean;
+import com.jt.plt.product.dto.program.ProgramInfoBean;
+import com.jt.plt.product.dto.program.RateInfoBean;
+import com.jt.plt.product.dto.program.RiskInfoBean;
+import com.jt.plt.product.entity.ConfCoefficient;
+import com.jt.plt.product.entity.FloatRate;
+import com.jt.plt.product.entity.InsuranceLiability;
+import com.jt.plt.product.entity.InsuranceProgram;
+import com.jt.plt.product.entity.LiabilityLimitRela;
+import com.jt.plt.product.entity.ProductInfo;
+import com.jt.plt.product.enums.ProductConfigBeanEnum;
+import com.jt.plt.product.mapper.ConfCoefficientMapper;
+import com.jt.plt.product.mapper.FloatRateMapper;
+import com.jt.plt.product.mapper.InsuranceCompanyRelaMapper;
+import com.jt.plt.product.mapper.InsuranceFactorRelaMapper;
+import com.jt.plt.product.mapper.InsuranceLiabilityMapper;
+import com.jt.plt.product.mapper.InsuranceProgramMapper;
+import com.jt.plt.product.mapper.LiabilityLimitRelaMapper;
+import com.jt.plt.product.mapper.ProductInfoMapper;
+import com.jt.plt.product.service.api.ProductInfoServiceApi;
+import com.jt.plt.product.util.ReturnCode;
+import com.jt.plt.product.vo.AcceptInsuranceInfoVO;
+
+import tk.mybatis.mapper.entity.Example;
+@Service
+public class ProductInfoServiceApiImpl implements ProductInfoServiceApi {
+	private final Logger log = LoggerFactory.getLogger(ProductInfoServiceApiImpl.class);
+	@Autowired 
+	private ProductInfoMapper productInfoMapper;
+	@Autowired
+	private InsuranceProgramMapper insuranceProgramMapper;
+	@Autowired
+	private InsuranceLiabilityMapper insuranceLiabilityMapper;
+	@Autowired
+	private InsuranceCompanyRelaMapper insuranceCompanyRelaMapper;
+	@Autowired
+	private InsuranceFactorRelaMapper insuranceFactorRelaMapper;
+	@Autowired
+	private ConfCoefficientMapper confCoefficientMapper;
+	@Autowired
+	private FloatRateMapper floatRateMapper;
+	@Autowired
+	private LiabilityLimitRelaMapper liabilityLimitRelaMapper;
+	/**
+	 * 
+	 * @param productCode
+	 * @return
+	 * 描述：产品详情
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public ProductInfoDTO findProductInfo(String productCode) {
+		ProductInfo pi = productInfoMapper.selectByProductCode(productCode);
+		//产品不存在
+		if(pi==null) {
+			log.error(ProductConfigBeanEnum.NO_DATA_PRODUCT.getMessage());
+			return null;
+		}else {
+			//产品未上架
+			if(!StringUtils.contains(pi.getProductStatus(), ReturnCode.STATUS_CODE_6)) {
+				log.error("产品状态有误！状态应该为6-已上架，现在为"+pi.getProductStatus());
+				return null;
+			}
+			ProductInfoDTO productInfoDTO = new ProductInfoDTO();
+			productInfoDTO.setCode(pi.getProductCode());
+			productInfoDTO.setName(pi.getProductName());
+			productInfoDTO.setDescription(pi.getProductDesc());
+			productInfoDTO.setOnsaleAreas(null);
+			productInfoDTO.setClauseFileName(null);
+			productInfoDTO.setClauseFileUrl(null);
+			productInfoDTO.setLogoUrl(null);
+			return productInfoDTO;
+		}	
+	}
+	/**
+	 * 
+	 * @param productCode
+	 * @return
+	 * 描述：方案详情
+	 */
+	/*@Override
+	@Transactional(readOnly = true)
+	public List<ProgramInfoBean> findProgramInfo(String productCode) {
+		ProductInfo pi = productInfoMapper.selectByProductCode(productCode);
+		//产品不存在
+		if(pi==null) {
+			log.error(ProductConfigBeanEnum.NO_DATA_PRODUCT.getMessage());
+			return null;
+		}else {
+			if(!StringUtils.equals(pi.getProductStatus(), ReturnCode.STATUS_CODE_6)) {//产品未上架
+				log.error("产品状态有误！状态应该为6-已上架，现在为"+pi.getProductStatus());
+				return null;
+			}
+			List<ProgramInfoBean> programInfoList = new ArrayList<>();
+			ProgramInfoBean programInfoBean =null;
+			List<InsuranceProgram> programList = insuranceProgramMapper.selectByProductCode(pi.getProductCode());
+			for (InsuranceProgram insuranceProgram : programList) {
+				programInfoBean = new ProgramInfoBean();
+				//通过方案编码查询限额 并 取得对应险种
+				List<LiabilityLimitRela> relaList = liabilityLimitRelaMapper.selectByProgramCode(insuranceProgram.getProgramCode());
+				List<String> liabilityCodeList = new ArrayList<>();
+				Map<String,String> riskMap = new HashMap<>();
+				for (LiabilityLimitRela liabilityLimitRela : relaList) {
+					liabilityCodeList.add(liabilityLimitRela.getLiabilityCode());
+					InsuranceLiability insuranceLiability = insuranceLiabilityMapper.selectByInsuranceLiabilityCode(liabilityLimitRela.getLiabilityCode());
+					riskMap.put(insuranceLiability.getRiskCode(), insuranceLiability.getRiskName());
+					liabilityLimitRela.setRiskCode(insuranceLiability.getRiskCode());
+					liabilityLimitRela.setRiskName(insuranceLiability.getRiskName());
+				}
+				RiskInfoBean riskInfoBean = null;
+				List<RiskInfoBean> riskInfoList = null;
+				switch (insuranceProgram.getBasicPremiumType()) {
+				//固定
+				case ReturnCode.STATUS_CODE_1:
+					
+					riskInfoList = new ArrayList<>();
+					for (String riksCode : riskMap.keySet()) {
+						riskInfoBean = new RiskInfoBean();
+						riskInfoBean.setCode(riksCode);
+						riskInfoBean.setName(riskMap.get(riksCode));
+						List<LiabilityInfoBean> liabilityList = new ArrayList<>();
+						LiabilityInfoBean liabilityInfoBean = null;
+						Map<String,LiabilityLimitRela> liabilityMap = new HashMap<>();
+						for (LiabilityLimitRela liabilityLimitRela : relaList) {
+							if(StringUtils.equals(liabilityLimitRela.getRiskCode(), riksCode)) {
+								liabilityMap.put(liabilityLimitRela.getLiabilityCode(), liabilityLimitRela);
+							}
+						}
+							//责任
+							for (String liabilityCode : liabilityMap.keySet()) {
+								liabilityInfoBean = new LiabilityInfoBean();
+								liabilityInfoBean.setCode(liabilityMap.get(liabilityCode).getLiabilityCode());
+								liabilityInfoBean.setName(liabilityMap.get(liabilityCode).getLiabilityName());
+								LimitInfoBean limitInfoBean = null;
+								List<LimitInfoBean> limitList = new ArrayList<>();
+								for (LiabilityLimitRela liabilityLimitRela : relaList) {
+									if(StringUtils.equals(liabilityLimitRela.getLiabilityCode(), liabilityCode)) {
+										limitInfoBean = new LimitInfoBean();
+										limitInfoBean.setCode(liabilityLimitRela.getLimitCode());
+										limitInfoBean.setIsFloat(ReturnCode.STATUS_CODE_0);
+										limitInfoBean.setName(liabilityLimitRela.getLimitName());
+										limitInfoBean.setPremium(null);
+										limitInfoBean.setValue(liabilityLimitRela.getLimitValues());
+										limitInfoBean.setValueCode(liabilityLimitRela.getLimitValuesCode());
+										limitList.add(limitInfoBean);
+									}
+								}
+								liabilityInfoBean.setLimitList(limitList);
+								liabilityList.add(liabilityInfoBean);
+							}
+							riskInfoBean.setLiabilityList(liabilityList);
+							riskInfoList.add(riskInfoBean);
+						}
+					programInfoBean.setRiskList(riskInfoList);
+					programInfoBean.setCode(insuranceProgram.getProgramCode());
+					programInfoBean.setFixFloatFlag(insuranceProgram.getBasicPremiumType());
+					programInfoBean.setRiskFlag(insuranceProgram.getRiskFlag());
+					programInfoBean.setPremium(insuranceProgram.getBasicPremium());
+					programInfoList.add(programInfoBean);
+					break;
+				//浮动
+				case ReturnCode.STATUS_CODE_3:
+					riskInfoList = new ArrayList<>();
+					for (String riksCode : riskMap.keySet()) {
+						riskInfoBean = new RiskInfoBean();
+						riskInfoBean.setCode(riksCode);
+						riskInfoBean.setName(riskMap.get(riksCode));
+						List<LiabilityInfoBean> liabilityList = new ArrayList<>();
+						LiabilityInfoBean liabilityInfoBean = null;
+						Map<String,LiabilityLimitRela> liabilityMap = new HashMap<>();
+						for (LiabilityLimitRela liabilityLimitRela : relaList) {
+							if(StringUtils.equals(liabilityLimitRela.getRiskCode(), riksCode)) {
+								liabilityMap.put(liabilityLimitRela.getLiabilityCode(), liabilityLimitRela);
+							}
+						}
+							//责任
+							for (String liabilityCode : liabilityMap.keySet()) {
+								liabilityInfoBean = new LiabilityInfoBean();
+								liabilityInfoBean.setCode(liabilityMap.get(liabilityCode).getLiabilityCode());
+								liabilityInfoBean.setName(liabilityMap.get(liabilityCode).getLiabilityName());
+								LimitInfoBean limitInfoBean = null;
+								List<LimitInfoBean> limitList = new ArrayList<>();
+								Map<String,LiabilityLimitRela> limitMap = new HashMap<>();
+								for (LiabilityLimitRela liabilityLimitRela : relaList) {
+									if(StringUtils.equals(liabilityLimitRela.getLiabilityCode(), liabilityCode)) {
+										limitMap.put(liabilityLimitRela.getLimitCode(), liabilityLimitRela);
+									}
+								}
+								for (String limitCode : limitMap.keySet()) {
+									limitInfoBean = new LimitInfoBean();
+									limitInfoBean.setCode(limitCode);
+									limitInfoBean.setName(limitMap.get(limitCode).getLimitName());
+									limitInfoBean.setIsFloat(ReturnCode.STATUS_CODE_1);
+									List<FloatRate> floatRateList = floatRateMapper.selectByprogramCodeAndLimitCode(insuranceProgram.getProgramCode(),limitCode);
+									RateInfoBean rateInfoBean = null;
+									List<RateInfoBean> rateInfoList = new ArrayList<>();
+									for (FloatRate floatRate : floatRateList) {
+										 rateInfoBean = new RateInfoBean();
+										 rateInfoBean.setMax(floatRate.getMaxLimitValue());
+										 rateInfoBean.setMin(floatRate.getMinLimitValue());
+										 rateInfoBean.setRate(floatRate.getRate());
+										 switch (floatRate.getMaxScopeSign()) {
+										case ReturnCode.CODE0:
+											switch (floatRate.getMinScopeSign()) {
+											case ReturnCode.CODE0://()
+												 rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_1);
+												break;
+											case ReturnCode.CODE1://[)
+												 rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_2);
+												break;
+											default:
+												break;
+											}
+											break;
+										case ReturnCode.CODE1:
+											switch (floatRate.getMinScopeSign()) {
+											case ReturnCode.CODE0://(]
+												 rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_3);
+												break;
+											case ReturnCode.CODE1://[]
+												 rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_4);
+												break;
+											default:
+												break;
+											}
+											break;
+										default:
+											break;
+										}
+										 rateInfoList.add(rateInfoBean);
+									}
+									limitInfoBean.setRateList(rateInfoList);
+									limitList.add(limitInfoBean);
+								}
+								liabilityInfoBean.setLimitList(limitList);
+								liabilityList.add(liabilityInfoBean);
+							}
+							riskInfoBean.setLiabilityList(liabilityList);
+							riskInfoList.add(riskInfoBean);
+						}
+					programInfoBean.setRiskList(riskInfoList);
+					programInfoBean.setCode(insuranceProgram.getProgramCode());
+					programInfoBean.setFixFloatFlag(insuranceProgram.getBasicPremiumType());
+					programInfoBean.setRiskFlag(insuranceProgram.getRiskFlag());
+					programInfoBean.setPremium(insuranceProgram.getBasicPremium());
+					programInfoList.add(programInfoBean);
+					break;
+				//固定加浮动
+				case ReturnCode.STATUS_CODE_4:
+					riskInfoList = new ArrayList<>();
+					for (String riksCode : riskMap.keySet()) {
+						riskInfoBean = new RiskInfoBean();
+						riskInfoBean.setCode(riksCode);
+						riskInfoBean.setName(riskMap.get(riksCode));
+						List<LiabilityInfoBean> liabilityList = new ArrayList<>();
+						LiabilityInfoBean liabilityInfoBean = null;
+						Map<String,LiabilityLimitRela> liabilityMap = new HashMap<>();
+						for (LiabilityLimitRela liabilityLimitRela : relaList) {
+							if(StringUtils.equals(liabilityLimitRela.getRiskCode(), riksCode)) {
+								liabilityMap.put(liabilityLimitRela.getLiabilityCode(), liabilityLimitRela);
+							}
+						}
+							//责任
+							for (String liabilityCode : liabilityMap.keySet()) {
+								liabilityInfoBean = new LiabilityInfoBean();
+								liabilityInfoBean.setCode(liabilityMap.get(liabilityCode).getLiabilityCode());
+								liabilityInfoBean.setName(liabilityMap.get(liabilityCode).getLiabilityName());
+								LimitInfoBean limitInfoBean = null;
+								List<LimitInfoBean> limitList = new ArrayList<>();
+								Map<String,LiabilityLimitRela> limitMap = new HashMap<>();
+								for (LiabilityLimitRela liabilityLimitRela : relaList) {
+									if(liabilityLimitRela.getPremium()!=null) {
+										if(StringUtils.equals(liabilityLimitRela.getLiabilityCode(), liabilityCode)) {
+											limitInfoBean = new LimitInfoBean();
+											limitInfoBean.setCode(liabilityLimitRela.getLimitCode());
+											limitInfoBean.setIsFloat(ReturnCode.STATUS_CODE_0);
+											limitInfoBean.setName(liabilityLimitRela.getLimitName());
+											limitInfoBean.setPremium(liabilityLimitRela.getPremium());
+											limitInfoBean.setValue(liabilityLimitRela.getLimitValues());
+											limitInfoBean.setValueCode(liabilityLimitRela.getLimitValuesCode());
+											limitList.add(limitInfoBean);
+										}
+									}else {
+										if(StringUtils.equals(liabilityLimitRela.getLiabilityCode(), liabilityCode)) {
+											limitMap.put(liabilityLimitRela.getLimitCode(), liabilityLimitRela);
+										}
+									}
+								}
+								
+								//有浮动
+								if(limitMap.size()>0) {
+									for (LiabilityLimitRela liabilityLimitRela : relaList) {
+										for (String limitCode : limitMap.keySet()) {
+											if(StringUtils.equals(liabilityLimitRela.getLimitCode(), limitCode)) {
+												limitInfoBean = new LimitInfoBean();
+												limitInfoBean.setCode(limitCode);
+												limitInfoBean.setIsFloat(ReturnCode.STATUS_CODE_1);
+												limitInfoBean.setName(liabilityLimitRela.getLimitName());
+												List<FloatRate> floatRateList = floatRateMapper.selectByprogramCodeAndLimitCode(insuranceProgram.getProgramCode(),limitCode);
+												RateInfoBean rateInfoBean = null;
+												List<RateInfoBean> rateInfoList = new ArrayList<>();
+												for (FloatRate floatRate : floatRateList) {
+													 rateInfoBean = new RateInfoBean();
+													 rateInfoBean.setMax(floatRate.getMaxLimitValue());
+													 rateInfoBean.setMin(floatRate.getMinLimitValue());
+													 rateInfoBean.setRate(floatRate.getRate());
+													 switch (floatRate.getMaxScopeSign()) {
+													case ReturnCode.CODE0:
+														switch (floatRate.getMinScopeSign()) {
+														case ReturnCode.CODE0://()
+															 rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_1);
+															break;
+														case ReturnCode.CODE1://[)
+															 rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_2);
+															break;
+														default:
+															break;
+														}
+														break;
+													case ReturnCode.CODE1:
+														switch (floatRate.getMinScopeSign()) {
+														case ReturnCode.CODE0://(]
+															 rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_3);
+															break;
+														case ReturnCode.CODE1://[]
+															 rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_4);
+															break;
+														default:
+															break;
+														}
+														break;
+													default:
+														break;
+													}
+													 rateInfoList.add(rateInfoBean);
+												}
+												limitInfoBean.setRateList(rateInfoList);
+											}
+										}
+									}
+								}
+								liabilityInfoBean.setLimitList(limitList);
+								liabilityList.add(liabilityInfoBean);
+							}
+							riskInfoBean.setLiabilityList(liabilityList);
+							riskInfoList.add(riskInfoBean);
+						}
+					programInfoBean.setRiskList(riskInfoList);
+					programInfoBean.setCode(insuranceProgram.getProgramCode());
+					programInfoBean.setFixFloatFlag(insuranceProgram.getBasicPremiumType());
+					programInfoBean.setRiskFlag(insuranceProgram.getRiskFlag());
+					programInfoBean.setPremium(insuranceProgram.getBasicPremium());
+					programInfoList.add(programInfoBean);
+					break;
+				default:
+					break;
+				}
+			}
+			return programInfoList;
+		}
+	}*/
+	/**
+	 * 
+	 * @param productCode
+	 * @return
+	 * 描述：方案详情
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<ProgramInfoBean> findProgramInfo(String productCode) {
+		ProductInfo pi = productInfoMapper.selectByProductCode(productCode);
+		//产品不存在
+		if(pi==null) {
+			log.error(ProductConfigBeanEnum.NO_DATA_PRODUCT.getMessage());
+			return null;
+		}else {
+			if(!StringUtils.equals(pi.getProductStatus(), ReturnCode.STATUS_CODE_6)) {//产品未上架
+				log.error("产品状态有误！状态应该为6-已上架，现在为"+pi.getProductStatus());
+				return null;
+			}
+			List<ProgramInfoBean> programInfoList = new ArrayList<>();
+			ProgramInfoBean programInfoBean =null;
+			List<InsuranceProgram> programList = insuranceProgramMapper.selectByProductCode(pi.getProductCode());
+			for (InsuranceProgram insuranceProgram : programList) {
+				programInfoBean = new ProgramInfoBean();
+				//通过方案编码查询限额 并 取得对应险种
+				List<LiabilityLimitRela> relaList = liabilityLimitRelaMapper.selectByProgramCode(insuranceProgram.getProgramCode());
+				Map<String,LiabilityLimitRela> liabilityMap = null;
+				List<LiabilityInfoBean> liabilityList = null;
+				switch (insuranceProgram.getBasicPremiumType()) {
+				//固定
+				case ReturnCode.STATUS_CODE_1:
+					liabilityList = new ArrayList<>();
+					LiabilityInfoBean liabilityInfoBean = null;
+					liabilityMap = new HashMap<>();
+					for (LiabilityLimitRela liabilityLimitRela : relaList) {
+							liabilityMap.put(liabilityLimitRela.getLiabilityCode(), liabilityLimitRela);
+					}
+					//责任
+					for (String liabilityCode : liabilityMap.keySet()) {
+						liabilityInfoBean = new LiabilityInfoBean();
+						InsuranceLiability insuranceLiability = insuranceLiabilityMapper.selectByInsuranceLiabilityCode(liabilityCode);
+						liabilityInfoBean.setCode(liabilityMap.get(liabilityCode).getLiabilityCode());
+						liabilityInfoBean.setName(liabilityMap.get(liabilityCode).getLiabilityName());
+						liabilityInfoBean.setRiskCode(insuranceLiability.getRiskCode());
+						liabilityInfoBean.setRiskName(insuranceLiability.getRiskName());
+						LimitInfoBean limitInfoBean = null;
+						List<LimitInfoBean> limitList = new ArrayList<>();
+						for (LiabilityLimitRela liabilityLimitRela : relaList) {
+							if(StringUtils.equals(liabilityLimitRela.getLiabilityCode(), liabilityCode)) {
+								limitInfoBean = new LimitInfoBean();
+								limitInfoBean.setCode(liabilityLimitRela.getLimitCode());
+								limitInfoBean.setIsFloat(ReturnCode.STATUS_CODE_0);
+								limitInfoBean.setName(liabilityLimitRela.getLimitName());
+								limitInfoBean.setPremium(null);
+								limitInfoBean.setValue(liabilityLimitRela.getLimitValues());
+								limitInfoBean.setValueCode(liabilityLimitRela.getLimitValuesCode());
+								limitList.add(limitInfoBean);
+							}
+						}
+						liabilityInfoBean.setLimitList(limitList);
+						liabilityList.add(liabilityInfoBean);
+					}
+					programInfoBean.setLiabilityList(liabilityList);
+					//programInfoBean.setRiskList(riskInfoList);
+					programInfoBean.setCode(insuranceProgram.getProgramCode());
+					programInfoBean.setFixFloatFlag(insuranceProgram.getBasicPremiumType());
+					programInfoBean.setRiskFlag(insuranceProgram.getRiskFlag());
+					programInfoBean.setPremium(insuranceProgram.getBasicPremium());
+					programInfoList.add(programInfoBean);
+					break;
+					//浮动
+				case ReturnCode.STATUS_CODE_3:
+					liabilityList = new ArrayList<>();
+					liabilityMap = new HashMap<>();
+					for (LiabilityLimitRela liabilityLimitRela : relaList) {
+							liabilityMap.put(liabilityLimitRela.getLiabilityCode(), liabilityLimitRela);
+					}
+					//责任
+					for (String liabilityCode : liabilityMap.keySet()) {
+						liabilityInfoBean = new LiabilityInfoBean();
+						liabilityInfoBean.setCode(liabilityMap.get(liabilityCode).getLiabilityCode());
+						liabilityInfoBean.setName(liabilityMap.get(liabilityCode).getLiabilityName());
+						InsuranceLiability insuranceLiability = insuranceLiabilityMapper.selectByInsuranceLiabilityCode(liabilityCode);
+						liabilityInfoBean.setRiskCode(insuranceLiability.getRiskCode());
+						liabilityInfoBean.setRiskName(insuranceLiability.getRiskName());
+						LimitInfoBean limitInfoBean = null;
+						List<LimitInfoBean> limitList = new ArrayList<>();
+						Map<String,LiabilityLimitRela> limitMap = new HashMap<>();
+						for (LiabilityLimitRela liabilityLimitRela : relaList) {
+							if(StringUtils.equals(liabilityLimitRela.getLiabilityCode(), liabilityCode)) {
+								limitMap.put(liabilityLimitRela.getLimitCode(), liabilityLimitRela);
+							}
+						}
+						for (String limitCode : limitMap.keySet()) {
+							limitInfoBean = new LimitInfoBean();
+							limitInfoBean.setCode(limitCode);
+							limitInfoBean.setName(limitMap.get(limitCode).getLimitName());
+							limitInfoBean.setIsFloat(ReturnCode.STATUS_CODE_1);
+							List<FloatRate> floatRateList = floatRateMapper.selectByprogramCodeAndLimitCode(insuranceProgram.getProgramCode(),limitCode);
+							RateInfoBean rateInfoBean = null;
+							List<RateInfoBean> rateInfoList = new ArrayList<>();
+							for (FloatRate floatRate : floatRateList) {
+								rateInfoBean = new RateInfoBean();
+								rateInfoBean.setMax(floatRate.getMaxLimitValue());
+								rateInfoBean.setMin(floatRate.getMinLimitValue());
+								rateInfoBean.setRate(floatRate.getRate());
+								switch (floatRate.getMaxScopeSign()) {
+								case ReturnCode.CODE0:
+									switch (floatRate.getMinScopeSign()) {
+									case ReturnCode.CODE0://()
+										rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_1);
+										break;
+									case ReturnCode.CODE1://[)
+										rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_2);
+										break;
+									default:
+										break;
+									}
+									break;
+								case ReturnCode.CODE1:
+									switch (floatRate.getMinScopeSign()) {
+									case ReturnCode.CODE0://(]
+										rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_3);
+										break;
+									case ReturnCode.CODE1://[]
+										rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_4);
+										break;
+									default:
+										break;
+									}
+									break;
+								default:
+									break;
+								}
+								rateInfoList.add(rateInfoBean);
+							}
+							limitInfoBean.setRateList(rateInfoList);
+							limitList.add(limitInfoBean);
+						}
+						liabilityInfoBean.setLimitList(limitList);
+						liabilityList.add(liabilityInfoBean);
+					}
+					programInfoBean.setLiabilityList(liabilityList);
+					programInfoBean.setCode(insuranceProgram.getProgramCode());
+					programInfoBean.setFixFloatFlag(insuranceProgram.getBasicPremiumType());
+					programInfoBean.setRiskFlag(insuranceProgram.getRiskFlag());
+					programInfoBean.setPremium(insuranceProgram.getBasicPremium());
+					programInfoList.add(programInfoBean);
+					break;
+					//固定加浮动
+				case ReturnCode.STATUS_CODE_4:
+					liabilityMap = new HashMap<>();
+					liabilityList = new ArrayList<>();
+					for (LiabilityLimitRela liabilityLimitRela : relaList) {
+							liabilityMap.put(liabilityLimitRela.getLiabilityCode(), liabilityLimitRela);
+					}
+					//责任
+					for (String liabilityCode : liabilityMap.keySet()) {
+						liabilityInfoBean = new LiabilityInfoBean();
+						liabilityInfoBean.setCode(liabilityMap.get(liabilityCode).getLiabilityCode());
+						liabilityInfoBean.setName(liabilityMap.get(liabilityCode).getLiabilityName());
+						LimitInfoBean limitInfoBean = null;
+						List<LimitInfoBean> limitList = new ArrayList<>();
+						Map<String,LiabilityLimitRela> limitMap = new HashMap<>();
+						for (LiabilityLimitRela liabilityLimitRela : relaList) {
+							if(liabilityLimitRela.getPremium()!=null) {
+								if(StringUtils.equals(liabilityLimitRela.getLiabilityCode(), liabilityCode)) {
+									limitInfoBean = new LimitInfoBean();
+									limitInfoBean.setCode(liabilityLimitRela.getLimitCode());
+									limitInfoBean.setIsFloat(ReturnCode.STATUS_CODE_0);
+									limitInfoBean.setName(liabilityLimitRela.getLimitName());
+									limitInfoBean.setPremium(liabilityLimitRela.getPremium());
+									limitInfoBean.setValue(liabilityLimitRela.getLimitValues());
+									limitInfoBean.setValueCode(liabilityLimitRela.getLimitValuesCode());
+									limitList.add(limitInfoBean);
+								}
+							}else {
+								if(StringUtils.equals(liabilityLimitRela.getLiabilityCode(), liabilityCode)) {
+									limitMap.put(liabilityLimitRela.getLimitCode(), liabilityLimitRela);
+								}
+							}
+						}
+						//有浮动
+						if(limitMap.size()>0) {
+							for (LiabilityLimitRela liabilityLimitRela : relaList) {
+								for (String limitCode : limitMap.keySet()) {
+									if(StringUtils.equals(liabilityLimitRela.getLimitCode(), limitCode)) {
+										limitInfoBean = new LimitInfoBean();
+										limitInfoBean.setCode(limitCode);
+										limitInfoBean.setIsFloat(ReturnCode.STATUS_CODE_1);
+										limitInfoBean.setName(liabilityLimitRela.getLimitName());
+										List<FloatRate> floatRateList = floatRateMapper.selectByprogramCodeAndLimitCode(insuranceProgram.getProgramCode(),limitCode);
+										RateInfoBean rateInfoBean = null;
+										List<RateInfoBean> rateInfoList = new ArrayList<>();
+										for (FloatRate floatRate : floatRateList) {
+											rateInfoBean = new RateInfoBean();
+											rateInfoBean.setMax(floatRate.getMaxLimitValue());
+											rateInfoBean.setMin(floatRate.getMinLimitValue());
+											rateInfoBean.setRate(floatRate.getRate());
+											switch (floatRate.getMaxScopeSign()) {
+											case ReturnCode.CODE0:
+												switch (floatRate.getMinScopeSign()) {
+												case ReturnCode.CODE0://()
+													rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_1);
+													break;
+												case ReturnCode.CODE1://[)
+													rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_2);
+													break;
+												default:
+													break;
+												}
+												break;
+											case ReturnCode.CODE1:
+												switch (floatRate.getMinScopeSign()) {
+												case ReturnCode.CODE0://(]
+													rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_3);
+													break;
+												case ReturnCode.CODE1://[]
+													rateInfoBean.setSignCode(ReturnCode.STATUS_CODE_4);
+													break;
+												default:
+													break;
+												}
+												break;
+											default:
+												break;
+											}
+											rateInfoList.add(rateInfoBean);
+										}
+										limitInfoBean.setRateList(rateInfoList);
+									}
+								}
+							}
+						}
+						liabilityInfoBean.setLimitList(limitList);
+						liabilityList.add(liabilityInfoBean);
+					}
+					programInfoBean.setLiabilityList(liabilityList);
+					programInfoBean.setCode(insuranceProgram.getProgramCode());
+					programInfoBean.setFixFloatFlag(insuranceProgram.getBasicPremiumType());
+					programInfoBean.setRiskFlag(insuranceProgram.getRiskFlag());
+					programInfoBean.setPremium(insuranceProgram.getBasicPremium());
+					programInfoList.add(programInfoBean);
+					break;
+				default:
+					break;
+				}
+			}
+			return programInfoList;
+		}
+	}
+	/**
+	 * 
+	 * @param productCode
+	 * @return
+	 * 描述：承保属性信息
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<InusureCompanyDTO> findInusureCompanyInfo(String productCode) {
+		List<AcceptInsuranceInfoVO> list = insuranceCompanyRelaMapper.findAcceptInsuranceInfoVOById(productCode);
+		InusureCompanyDTO inusureCompanyDTO = null;
+		List<InusureCompanyDTO> icdList = new ArrayList<>();
+		for (AcceptInsuranceInfoVO acceptInsuranceInfoVO : list) {
+			inusureCompanyDTO = new InusureCompanyDTO();
+			inusureCompanyDTO.setId(acceptInsuranceInfoVO.getCompanyId());
+			inusureCompanyDTO.setName(acceptInsuranceInfoVO.getCompanyName());
+			switch (acceptInsuranceInfoVO.getRelaType()) {
+			case ReturnCode.STATUS_CODE_0:
+				inusureCompanyDTO.setPartyRole("承保");
+				switch (acceptInsuranceInfoVO.getAttributeValueCode()) {
+				case ReturnCode.STATUS_CODE_1:
+					inusureCompanyDTO.setShareType("独立承保");
+					inusureCompanyDTO.setShareScale(acceptInsuranceInfoVO.getAttributeValues());
+					break;
+				case ReturnCode.STATUS_CODE_2:
+					inusureCompanyDTO.setShareType("主承");
+					inusureCompanyDTO.setShareScale(acceptInsuranceInfoVO.getAttributeValues());
+					break;
+				case ReturnCode.STATUS_CODE_3:
+					inusureCompanyDTO.setShareType("共保");
+					inusureCompanyDTO.setShareScale(acceptInsuranceInfoVO.getAttributeValues());
+					break;
+				default:
+					break;
+				}
+				break;
+			case ReturnCode.STATUS_CODE_2:
+				inusureCompanyDTO.setPartyRole("出单");
+				switch (acceptInsuranceInfoVO.getAttributeValueCode()) {
+				case ReturnCode.STATUS_Y:
+					inusureCompanyDTO.setInsuringType("出单");
+					inusureCompanyDTO.setInsuringAreaCode(acceptInsuranceInfoVO.getAreaCode());
+					//TODO 区域名称
+					inusureCompanyDTO.setInsuringAreaName(null);
+					break;
+				case ReturnCode.STATUS_N:
+					inusureCompanyDTO.setInsuringType("跟单");
+					break;
+				default:
+					break;
+				}
+				break;
+			case ReturnCode.STATUS_CODE_3:
+				inusureCompanyDTO.setPartyRole("解付");
+				switch (acceptInsuranceInfoVO.getAttributeValueCode()) {
+				case ReturnCode.STATUS_CODE_4:
+					inusureCompanyDTO.setPayType("一对一解付");
+					inusureCompanyDTO.setPayScale(acceptInsuranceInfoVO.getAttributeValues());
+					break;
+				case ReturnCode.STATUS_CODE_5:
+					inusureCompanyDTO.setPayType("一对多解付");
+					inusureCompanyDTO.setPayScale(acceptInsuranceInfoVO.getAttributeValues());
+					break;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
+			}
+			icdList.add(inusureCompanyDTO);
+		}
+		return icdList;
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public List<Factor> findFactorInfo(String productCode) {
+		 List<Factor> fList = insuranceFactorRelaMapper.findFactorInfo(productCode);
+		 if(fList!=null&&fList.size()>0) {
+			 Example confCoefficientExample = new Example(ConfCoefficient.class);
+			 ConfCoefficient confCoefficient = null;
+			 for (Factor factor : fList) {
+				 confCoefficientExample.createCriteria().andEqualTo("status", ReturnCode.STATUS_CODE_1).andEqualTo("factorRelaId", factor.getFactorCode());
+				 List<ConfCoefficient> confCoefficientList = confCoefficientMapper.selectByExample(confCoefficientExample);
+				 if(confCoefficientList!=null&&confCoefficientList.size()>0) {
+					 confCoefficient = confCoefficientList.get(0);
+					 if(StringUtils.equals(confCoefficient.getOperatorType(), ReturnCode.STATUS_CODE_2)) {
+						 factor.setType(confCoefficient.getOperatorType());
+					 }
+				 }
+			}
+			 return fList;
+		 }else {
+			 //TODO 因子为空 处理
+			 return null;
+		 }
+	}
+	/**
+	 * 
+	 * @param progDTOList
+	 * @return
+	 * 描述：产品中心与特设索道产品的方案映射
+	 */
+/*	private List<ProgDTO> productProgMapper(List<ProgramInfoBean> progDTOList){
+		if(progDTOList!=null&&progDTOList.size()>0) {
+			for (ProgDTO progDTO : progDTOList) {
+				BigDecimal premium = progDTO.getPremium();
+				switch (premium.intValue()) {
+				case 3600:
+					progDTO.setId("15");
+					break;
+				case 6000:
+					progDTO.setId("16");
+					break;
+				case 15000:
+					progDTO.setId("1");
+					break;
+				case 25000:
+					progDTO.setId("2");
+					break;
+				case 32000:
+					progDTO.setId("3");
+					break;
+				case 45000:
+					progDTO.setId("4");
+					break;
+				case 55000:
+					progDTO.setId("5");
+					break;
+				case 85000:
+					progDTO.setId("6");
+					break;
+				case 100000:
+					progDTO.setId("7");
+					break;
+				case 150000:
+					progDTO.setId("8");
+					break;
+				case 165000:
+					progDTO.setId("9");
+					break;
+				case 180000:
+					progDTO.setId("10");
+					break;
+				case 200000:
+					progDTO.setId("11");
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		return progDTOList;
+	}*/
+}

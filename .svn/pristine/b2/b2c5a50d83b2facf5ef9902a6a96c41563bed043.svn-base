@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.product.mapper.FactorMapper">
+	<resultMap id="BaseResultMap" type="com.jt.product.entity.Factor">
+		<!-- WARNING - @mbg.generated -->
+		<id column="factor_id" jdbcType="INTEGER" property="factorId" />
+		<result column="factor_name" jdbcType="VARCHAR" property="factorName" />
+		<result column="factor_desc" jdbcType="VARCHAR" property="factorDesc" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="modify_user" jdbcType="VARCHAR" property="modifyUser" />
+		<result column="factor_rela_id" jdbcType="INTEGER" property="factorRelaId" />
+	</resultMap>
+	<resultMap id="factorListVO" type="com.jt.product.entity.vo.FactorListVO">
+		<!-- WARNING - @mbg.generated -->
+		<id column="factor_id" jdbcType="INTEGER" property="factorId" />
+		<result column="factor_name" jdbcType="VARCHAR" property="factorName" />
+		<result column="factor_desc" jdbcType="VARCHAR" property="factorDesc" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="factor_rela_id" jdbcType="INTEGER" property="factorRelaId" />
+		<result column="factor_type_name" jdbcType="VARCHAR" property="factorTypeName" />
+	</resultMap>
+
+	<select id="findFactorListVOList" resultMap="factorListVO">
+		SELECT
+		tf.factor_id,
+		tf.create_time,
+		tf.create_user,
+		tf.factor_name,
+		tf.factor_desc,
+		tifr.factor_type_name,
+		tifr.factor_rela_id
+		FROM
+		t_factor tf,
+		t_insurance_factor_rela tifr
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="name!=null and name != ''">
+				AND tf.factor_name like CONCAT('%',#{name},'%')
+			</if>
+			<if test="creatBy!=null and creatBy != ''">
+				AND tf.create_user = #{creatBy}
+			</if>
+			AND tifr.status = '1'
+			AND tf.factor_id = tifr.factor_id ORDER BY tf.create_time DESC
+		</trim>
+	</select>
+
+
+</mapper>

@@ -1,0 +1,76 @@
+package com.jt.plt.product.controller;
+
+
+import com.jt.plt.product.dto.Factor;
+import com.jt.plt.product.dto.InusureCompanyDTO;
+import com.jt.plt.product.dto.ProductInfoDTO;
+import com.jt.plt.product.dto.ResultDTO;
+import com.jt.plt.product.entity.calPremium.FormulaBean;
+import com.jt.plt.product.enums.ResultEnum;
+import com.jt.plt.product.service.api.ProductInfoServiceApi;
+import com.jt.plt.product.util.JsonUtil;
+import com.jt.plt.product.util.ResultUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import com.jt.plt.product.entity.calPremium.FormulaDTO;
+import com.jt.plt.product.service.FormulaService;
+import com.jt.plt.product.util.ResultMsg;
+
+import java.util.List;
+
+
+@RestController
+@RequestMapping(value = "")
+public class ProdcutInfoController {
+
+    @Autowired
+    FormulaService formulaService;
+
+    @PostMapping(value="/calpremiumsvc", produces={MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public @ResponseBody ResultMsg calPremium(@RequestBody FormulaBean formulaBean){
+        return formulaService.countPremium(formulaBean);
+    }
+
+    @PostMapping("/premium")
+    public ResultMsg premium(@RequestBody String str) {
+		FormulaBean formulaBean= null;
+			formulaBean = JsonUtil.json2Object(str, FormulaBean.class);
+			if(formulaBean == null){
+				return ResultUtils.warnMsg(ResultEnum.PARAM_ERROR);
+			}
+
+		return formulaService.countPremium(formulaBean);
+	}
+
+    @Autowired
+    private ProductInfoServiceApi productInfoServiceApi;
+
+    /**
+     * 查询产品详情示例
+     * @param id 产品id
+     * @return
+     */
+    @GetMapping(value="/productdetailsvc", produces={MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public @ResponseBody
+    ResultDTO<ProductInfoDTO> svc(@RequestParam("id") String id) {
+        ProductInfoDTO piDTO = productInfoServiceApi.findProductInfo(id);
+        if(piDTO==null) {
+        	return new ResultDTO(ResultEnum.NO_DATA);
+        }
+        List<Factor> fList = productInfoServiceApi.findFactorInfo(id);
+        if(fList!=null&&fList.size()>0) {
+            piDTO.setHasFactors("1");
+            piDTO.setFactorList(fList);
+        }else {
+            piDTO.setHasFactors("0");
+        }
+        piDTO.setProgList(productInfoServiceApi.findProgramInfo(id));
+        List<InusureCompanyDTO> icList = productInfoServiceApi.findInusureCompanyInfo(id);
+        if(icList!=null&&icList.size()>0) {
+        	piDTO.setInusureCompanyList(icList);
+        }
+        return new ResultDTO(ResultEnum.SUCCESS,piDTO);
+    }
+}

@@ -1,0 +1,66 @@
+package com.jt.plt.product.dto;
+
+
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+ /**
+  * 描述：责任组合数据类
+  * 类名称：liabilityGroupDTO
+  * 作者： wangyang
+  * 版本：1.0
+  * 修改：
+  * 创建日期：
+  * 版权：江泰保险经纪股份有限公司
+  */
+/**
+ * liabilityGroupList: [{
+id: 责任组合id,
+name: 责任组合名称,
+liabilityList: [{
+ */
+public class LiabilityGroupDTO {
+    /**
+     * 责任组合id
+     */
+	@JsonInclude(value = Include.NON_NULL)
+    private String id;
+
+    /**
+     * 责任组合名称
+     */
+	@JsonInclude(value = Include.NON_NULL)
+    private String name;
+
+    /**
+     * 责任列表
+     */
+	@JsonInclude(value = Include.NON_NULL)
+    private List<LiabilityDTO> liabilityList;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public List<LiabilityDTO> getLiabilityList() {
+		return liabilityList;
+	}
+
+	public void setLiabilityList(List<LiabilityDTO> liabilityList) {
+		this.liabilityList = liabilityList;
+	}
+}

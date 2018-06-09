@@ -1,0 +1,120 @@
+package com.jt.plt.product.entity.calPremium;
+/**   
+ * 描述：保费计算公式接收值定义对象
+ * 作者： wephone   
+ * 创建日期： 2018年3月8日 下午1:54:58
+ * 版权：江泰保险经纪股份有限公司
+ */
+
+import lombok.Data;
+
+import java.util.List;
+@Data
+public class FormulaDTO {
+	
+    // 人数，产品编码，方案id（主险和附加险）	
+	
+	/**
+	 * 参与保费计算的人数
+	 */
+	private Double numberOfPeople;
+	
+	/**
+	 * 产品编码
+	 */
+	private String productCode;
+
+	/**
+	 * 主险保费
+	 */
+   private Double basicPremium;
+
+	/**
+	 * 主险浮动保费
+	 */
+	private List<FloatPremium> floatPremiums;
+
+	/**
+	 * 主险因子信息对象
+	 */
+	private  List<FactorInfo> factorInfos;
+
+	/**
+	 * 附加险基础保费
+	 */
+	private Double additionPremium;
+
+	/**
+	 * 附加险浮动保费
+	 */
+	private List<FloatPremium> additionFloatPremiums;
+
+	/**
+	 * 附加险因子对象
+	 */
+	private List<FactorInfo> additionFactorInfos;
+
+	public Double getNumberOfPeople() {
+		return numberOfPeople;
+	}
+
+	public void setNumberOfPeople(Double numberOfPeople) {
+		this.numberOfPeople = numberOfPeople;
+	}
+
+	public String getProductCode() {
+		return productCode;
+	}
+
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+
+	public Double getBasicPremium() {
+		return basicPremium;
+	}
+
+	public void setBasicPremium(Double basicPremium) {
+		this.basicPremium = basicPremium;
+	}
+
+	public List<FloatPremium> getFloatPremiums() {
+		return floatPremiums;
+	}
+
+	public void setFloatPremiums(List<FloatPremium> floatPremiums) {
+		this.floatPremiums = floatPremiums;
+	}
+
+	public List<FactorInfo> getFactorInfos() {
+		return factorInfos;
+	}
+
+	public void setFactorInfos(List<FactorInfo> factorInfos) {
+		this.factorInfos = factorInfos;
+	}
+
+	public Double getAdditionPremium() {
+		return additionPremium;
+	}
+
+	public void setAdditionPremium(Double additionPremium) {
+		this.additionPremium = additionPremium;
+	}
+
+	public List<FloatPremium> getAdditionFloatPremiums() {
+		return additionFloatPremiums;
+	}
+
+	public void setAdditionFloatPremiums(List<FloatPremium> additionFloatPremiums) {
+		this.additionFloatPremiums = additionFloatPremiums;
+	}
+
+	public List<FactorInfo> getAdditionFactorInfos() {
+		return additionFactorInfos;
+	}
+
+	public void setAdditionFactorInfos(List<FactorInfo> additionFactorInfos) {
+		this.additionFactorInfos = additionFactorInfos;
+	}
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.InsuranceFactorRelaMapper">
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.InsuranceFactorRela">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="factor_rela_id" jdbcType="INTEGER" property="factorRelaId" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="factor_id" jdbcType="INTEGER" property="factorId" />
+    <result column="factor_type_name" jdbcType="VARCHAR" property="factorTypeName" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="premium_ formula_id" jdbcType="INTEGER" property="premiumFormulaId" />
+  </resultMap>
+   <resultMap id="Factor" type="com.jt.plt.product.dto.Factor">
+   	<result column="factor_id" jdbcType="INTEGER" property="id" />
+ 	<result column="factor_rela_id" jdbcType="INTEGER" property="code" />
+   	<result column="factor_name" jdbcType="VARCHAR" property="name" />
+   </resultMap>
+   <!-- 因子接口信息 -->
+   <select id="findFactorInfo"  resultMap="Factor">
+   	SELECT f.factor_id,ifr.factor_rela_id,f.factor_name
+	FROM t_insurance_factor_rela ifr,t_factor f
+	WHERE ifr.factor_rela_id = f.factor_rela_id
+	AND ifr.`status` = '1' 
+	AND ifr.product_code = #{productCode}
+   </select>
+</mapper>
+

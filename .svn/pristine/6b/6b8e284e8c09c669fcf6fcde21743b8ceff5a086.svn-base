@@ -1,0 +1,14 @@
+package com.jt.plt.product.mapper;
+
+
+import java.util.List;
+
+import com.jt.plt.product.base.MyMapper;
+import com.jt.plt.product.dto.Factor;
+import com.jt.plt.product.entity.InsuranceFactorRela;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface InsuranceFactorRelaMapper extends MyMapper<InsuranceFactorRela> {
+	public List<Factor> findFactorInfo(String productCode);
+}

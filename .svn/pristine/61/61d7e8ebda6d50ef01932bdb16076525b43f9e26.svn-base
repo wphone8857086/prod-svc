@@ -1,0 +1,42 @@
+package com.jt.plt.product.mapper;
+
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import com.jt.plt.product.base.MyMapper;
+import com.jt.plt.product.entity.InsuranceProgram;
+import com.jt.plt.product.vo.FloatLimitValuesVO;
+import com.jt.plt.product.vo.InsuranLiabilityVO;
+import com.jt.plt.product.vo.InsuranLimitVO;
+import com.jt.plt.product.vo.LimitValuesVO;
+
+@Repository
+public interface InsuranceProgramMapper extends MyMapper<InsuranceProgram> {
+	List<InsuranLiabilityVO> findLiability(String productCode);
+	List<InsuranLimitVO> findLimit(@Param("productCode")String productId,@Param("liabilityId")String liabilityId);
+	List<LimitValuesVO> findLimitValues(@Param("productCode")String productId,@Param("liabilityId")String liabilityId,
+			@Param("limitId")String liabilityLimitId);
+	
+	List<Double> findFloatRate(@Param("productCode")String productId,@Param("liabilityId")String liabilityId,
+			@Param("limitId")String liabilityLimitId);
+	
+	FloatLimitValuesVO findMaxLimitValues(@Param("productCode")String productId,
+			@Param("liabilityId")String liabilityId,@Param("limitId")String liabilityLimitId,
+			@Param("rate")Double rate,@Param("limitId")String liabilityLimitId2);
+	
+	FloatLimitValuesVO findMinLimitValues(@Param("productCode")String productId,
+			@Param("liabilityId")String liabilityId,@Param("limitId")String liabilityLimitId,
+			@Param("rate")Double rate,@Param("limitId")String liabilityLimitId2);
+	
+	
+	List<InsuranLiabilityVO> findFixLiability(String productProgramId);
+	List<InsuranLimitVO> findFixLimit(@Param("productProgramId")String productProgramId,@Param("liabilityId")String liabilityId);
+	List<LimitValuesVO> findFixLimitValues(@Param("productProgramId")String productProgramId,@Param("liabilityId")String liabilityId,
+			@Param("limitId")String liabilityLimitId);
+
+    List<InsuranceProgram> selectByProgramCode(String ProgramCode);
+	
+}

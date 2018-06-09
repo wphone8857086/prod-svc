@@ -1,0 +1,39 @@
+package com.jt.plt.product.entity.calPremium;
+
+import lombok.Data;
+
+/**
+ * 描述：
+ * 作者： wephone   
+ * 创建日期： 2018年3月8日 下午1:52:30
+ * 版权：江泰保险经纪股份有限公司
+ */
+@Data
+public class FactorInfo {
+
+	/**
+     * 因子编码
+     */
+    private Integer factorRelaId;
+    
+    /**
+     * 用户输入的因子值
+     */
+    private String stringFactor;
+
+	public Integer getFactorRelaId() {
+		return factorRelaId;
+	}
+
+	public void setFactorRelaId(Integer factorRelaId) {
+		this.factorRelaId = factorRelaId;
+	}
+
+	public String getStringFactor() {
+		return stringFactor;
+	}
+
+	public void setStringFactor(String stringFactor) {
+		this.stringFactor = stringFactor;
+	}
+}

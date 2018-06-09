@@ -1,0 +1,249 @@
+package com.jt.plt.product.entity;
+
+import javax.persistence.*;
+import java.util.Date;
+
+@Table(name = "t_premium_calculate_rule")
+public class PremiumCalculateRule {
+    /**
+     * 保费计算因子规则id
+     */
+    @Id
+    @Column(name = "calculate_rule_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer calculateRuleId;
+
+    /**
+     * 产品编码
+     */
+    @Column(name = "product_code")
+    private String productCode;
+
+    /**
+     * 保费计算规则名称
+     */
+    @Column(name = "calculate_rule_name")
+    private String calculateRuleName;
+
+    /**
+     * 规则值参数，公式参数(1+a)(1+b)(1+c)-1
+     */
+    @Column(name = "calculate_rule_para")
+    private String calculateRulePara;
+
+    /**
+     * 规则值描述,参与 保费计算因子名称描述
+     */
+    @Column(name = "calculate_rule_para_des")
+    private String calculateRuleParaDes;
+
+    /**
+     * 计算条件，01-大于,02-大于等于,03-小于,04-小于等于
+     */
+    @Column(name = "condition_flag")
+    private String conditionFlag;
+
+    /**
+     * 规则参数对应规则值,0.3
+     */
+    @Column(name = "calculate_rule_values")
+    private String calculateRuleValues;
+
+    /**
+     * 计算公式,例如（1+0.3）
+     */
+    @Column(name = "calculate_rule_formula")
+    private String calculateRuleFormula;
+
+    /**
+     * 状态,0-失效,1-有效
+     */
+    private String status;
+
+    /**
+     * 创建时间
+     */
+    @Column(name = "create_time")
+    private Date createTime;
+
+
+    /**
+     * 获取保费计算因子规则id
+     *
+     * @return calculate_rule_id - 保费计算因子规则id
+     */
+    public Integer getCalculateRuleId() {
+        return calculateRuleId;
+    }
+
+    /**
+     * 设置保费计算因子规则id
+     *
+     * @param calculateRuleId 保费计算因子规则id
+     */
+    public void setCalculateRuleId(Integer calculateRuleId) {
+        this.calculateRuleId = calculateRuleId;
+    }
+
+    /**
+     * 获取产品代码
+     *
+     * @return product_code - 产品代码
+     */
+    public String getProductCode() {
+        return productCode;
+    }
+
+    /**
+     * 设置产品代码
+     *
+     * @param productCode 产品代码
+     */
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
+    /**
+     * 获取保费计算规则名称
+     *
+     * @return calculate_rule_name - 保费计算规则名称
+     */
+    public String getCalculateRuleName() {
+        return calculateRuleName;
+    }
+
+    /**
+     * 设置保费计算规则名称
+     *
+     * @param calculateRuleName 保费计算规则名称
+     */
+    public void setCalculateRuleName(String calculateRuleName) {
+        this.calculateRuleName = calculateRuleName;
+    }
+
+    /**
+     * 获取规则值参数，公式参数(1+a)(1+b)(1+c)-1
+     *
+     * @return calculate_rule_para - 规则值参数，公式参数(1+a)(1+b)(1+c)-1
+     */
+    public String getCalculateRulePara() {
+        return calculateRulePara;
+    }
+
+    /**
+     * 设置规则值参数，公式参数(1+a)(1+b)(1+c)-1
+     *
+     * @param calculateRulePara 规则值参数，公式参数(1+a)(1+b)(1+c)-1
+     */
+    public void setCalculateRulePara(String calculateRulePara) {
+        this.calculateRulePara = calculateRulePara;
+    }
+
+    /**
+     * 获取规则值描述,参与 保费计算因子名称描述
+     *
+     * @return calculate_rule_para_des - 规则值描述,参与 保费计算因子名称描述
+     */
+    public String getCalculateRuleParaDes() {
+        return calculateRuleParaDes;
+    }
+
+    /**
+     * 设置规则值描述,参与 保费计算因子名称描述
+     *
+     * @param calculateRuleParaDes 规则值描述,参与 保费计算因子名称描述
+     */
+    public void setCalculateRuleParaDes(String calculateRuleParaDes) {
+        this.calculateRuleParaDes = calculateRuleParaDes;
+    }
+
+    /**
+     * 获取计算条件，01-大于,02-大于等于,03-小于,04-小于等于
+     *
+     * @return condition_flag - 计算条件，01-大于,02-大于等于,03-小于,04-小于等于
+     */
+    public String getConditionFlag() {
+        return conditionFlag;
+    }
+
+    /**
+     * 设置计算条件，01-大于,02-大于等于,03-小于,04-小于等于
+     *
+     * @param conditionFlag 计算条件，01-大于,02-大于等于,03-小于,04-小于等于
+     */
+    public void setConditionFlag(String conditionFlag) {
+        this.conditionFlag = conditionFlag;
+    }
+
+    /**
+     * 获取规则参数对应规则值,0.3
+     *
+     * @return calculate_rule_values - 规则参数对应规则值,0.3
+     */
+    public String getCalculateRuleValues() {
+        return calculateRuleValues;
+    }
+
+    /**
+     * 设置规则参数对应规则值,0.3
+     *
+     * @param calculateRuleValues 规则参数对应规则值,0.3
+     */
+    public void setCalculateRuleValues(String calculateRuleValues) {
+        this.calculateRuleValues = calculateRuleValues;
+    }
+
+    /**
+     * 获取计算公式,例如（1+0.3）
+     *
+     * @return calculate_rule_formula - 计算公式,例如（1+0.3）
+     */
+    public String getCalculateRuleFormula() {
+        return calculateRuleFormula;
+    }
+
+    /**
+     * 设置计算公式,例如（1+0.3）
+     *
+     * @param calculateRuleFormula 计算公式,例如（1+0.3）
+     */
+    public void setCalculateRuleFormula(String calculateRuleFormula) {
+        this.calculateRuleFormula = calculateRuleFormula;
+    }
+
+    /**
+     * 获取状态,0-失效,1-有效
+     *
+     * @return status - 状态,0-失效,1-有效
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * 设置状态,0-失效,1-有效
+     *
+     * @param status 状态,0-失效,1-有效
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * 获取创建时间
+     *
+     * @return create_time - 创建时间
+     */
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * 设置创建时间
+     *
+     * @param createTime 创建时间
+     */
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+}

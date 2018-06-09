@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.InsuranceLiabilityMapper">
+	<resultMap id="BaseResultMap" type="com.jt.plt.product.entity.InsuranceLiability">
+		 <!-- WARNING - @mbg.generated -->
+        <id column="id" jdbcType="BIGINT" property="id"></id>
+        <result column="insurance_liability_code" jdbcType="VARCHAR" property="insuranceLiabilityCode"/>
+        <result column="insurance_liability_name" jdbcType="VARCHAR"
+                property="insuranceLiabilityName"/>
+        <result column="insurance_liability_type" jdbcType="VARCHAR"
+                property="insuranceLiabilityType"/>
+        <result column="insurance_liability_desc" jdbcType="VARCHAR"
+                property="insuranceLiabilityDesc"/>
+        <result column="risk_code" jdbcType="VARCHAR" property="riskCode"/>
+        <result column="risk_name" jdbcType="VARCHAR" property="riskName"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+	</resultMap>
+ 	<select id="selectByInsuranceLiabilityCode" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+        id,
+        insurance_liability_code,
+        insurance_liability_name,
+        insurance_liability_type,
+        insurance_liability_desc,
+        risk_code,
+        risk_name,
+        create_time,
+        create_user
+        FROM
+            t_insurance_liability til
+        WHERE
+            til.insurance_liability_code = #{insuranceLiabilityCode}
+	</select>
+</mapper>

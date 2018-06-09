@@ -1,0 +1,18 @@
+<Configuration status="off" monitorInterval="1800">
+	<properties>
+		<property name="LOG_HOME">logs</property>
+		<property name="ERROR_LOG_FILE_NAME">error</property>
+	</properties>
+
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d %-5p %c - %m%n" />
+		</Console>
+	</Appenders>
+
+	<Loggers>
+		<root level="DEBUG" includeLocation="false">
+			<appender-ref ref="Console" />
+		</root>
+	</Loggers>
+</Configuration>  

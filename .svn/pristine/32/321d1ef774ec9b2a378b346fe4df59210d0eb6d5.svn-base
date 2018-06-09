@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jt.plt.product.mapper.FloatRateMapper">
+    <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.FloatRate">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="program_code" property="programCode" jdbcType="VARCHAR"/>
+        <result column="limit_id" property="limitId" jdbcType="VARCHAR"/>
+        <result column="min_scope_sign" property="minScopeSign" jdbcType="INTEGER"/>
+        <result column="min_limit_value" property="minLimitValue" jdbcType="DOUBLE"/>
+        <result column="max_scope_sign" property="maxScopeSign" jdbcType="INTEGER"/>
+        <result column="max_limit_value" property="maxLimitValue" jdbcType="DOUBLE"/>
+        <result column="rate" property="rate" jdbcType="DOUBLE"/>
+    </resultMap>
+
+    <select id="findFloatRate" parameterType="Map" resultMap="BaseResultMap">
+
+        SELECT
+            t.rate
+        FROM t_float_rate t
+        WHERE program_code = #{progId}
+              AND limit_code = #{limitId}
+              AND ((min_scope_sign = 0 AND min_limit_value &lt; #{limitValues}) OR
+                   (min_scope_sign = 1 AND min_limit_value &lt;= #{limitValues}))
+              AND ((max_scope_sign = 0 AND #{limitValues} &lt; max_limit_value) OR
+                   (max_scope_sign = 1 AND #{limitValues} &lt;= max_limit_value))
+    </select>
+</mapper>

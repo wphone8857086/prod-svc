@@ -1,0 +1,79 @@
+package com.jt.plt.product.dto;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+/*
+ * id: 限额值ID,
+value: 限额值,
+valueType: 限额值类型, //数字，文本，自定义
+rate: 费率
+ */
+public class ValueDTO {
+    /**
+     * 限额值id
+     */
+    private String id;
+    /**
+     * 限额值
+     */
+    @JsonInclude(value = Include.NON_NULL)
+    private String value;
+    /**
+     * 限额值类型: 数字，文本，自定义
+     */
+    @JsonInclude(value = Include.NON_NULL)
+    private String valueType;
+    /**
+     * 费率(浮动)
+     */
+    private String rate;
+    /**
+	 * 1-参与保费计算 0-不参与保费计算
+	 */
+	private String calculationType;
+	/**
+	 * 1-参与保费计算 0-不参与保费计算
+	 */
+	public String getCalculationType() {
+		return calculationType;
+	}
+	/**
+	 * 1-参与保费计算 0-不参与保费计算
+	 */
+	public void setCalculationType(String calculationType) {
+		this.calculationType = calculationType;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public String getValueType() {
+		return valueType;
+	}
+
+	public void setValueType(String valueType) {
+		this.valueType = valueType;
+	}
+
+	public String getRate() {
+		return rate;
+	}
+
+	public void setRate(String rate) {
+		this.rate = rate;
+	}
+}

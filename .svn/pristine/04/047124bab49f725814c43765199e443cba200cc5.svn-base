@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.InsuranceLiabilityMapper">
+	<resultMap id="BaseResultMap" type="com.jt.plt.product.entity.InsuranceLiability">
+		<!-- WARNING - @mbg.generated -->
+		<id column="insurance_liability_id" jdbcType="VARCHAR" property="insuranceLiabilityId" />
+		<result column="insurance_liability_name" jdbcType="VARCHAR"
+			property="insuranceLiabilityName" />
+		<result column="insurance_liability_type" jdbcType="VARCHAR"
+			property="insuranceLiabilityType" />
+		<result column="insurance_liability_desc" jdbcType="VARCHAR"
+			property="insuranceLiabilityDesc" />
+		<result column="risk_id" jdbcType="VARCHAR" property="riskId" />
+		<result column="risk_name" jdbcType="VARCHAR" property="riskName" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+	</resultMap>
+
+</mapper>

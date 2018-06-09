@@ -1,0 +1,10 @@
+package com.jt.product.mapper;
+
+import com.jt.product.entity.PremiumCalculateRule;
+import org.springframework.stereotype.Repository;
+import com.jt.product.util.MyMapper;
+
+
+@Repository
+public interface PremiumCalculateRuleMapper extends MyMapper<PremiumCalculateRule> {
+}

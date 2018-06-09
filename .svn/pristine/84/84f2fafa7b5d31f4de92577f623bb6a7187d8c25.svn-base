@@ -1,0 +1,128 @@
+package com.jt.plt.product.dto.program;
+
+import java.util.List;
+
+public class ProductInfoBean {
+	/**
+	 * 产品id
+	 */
+	private Long id;
+	/**
+	 * 产品编码
+	 */
+	private String code;
+	/**
+	 * 产品名称
+	 */
+	private String productName;
+	/**
+	 * 产品描述
+	 */
+	private String productDesc;
+	/**
+	 * 保费计算类型：1-固定，3-浮动  4-浮动加固定
+	 */
+	private String premiumType;
+	/**
+	 * 是否还有附加险 0-不含附加险，1-含有附加险
+	 */
+	private String hasAttachRisk;
+	/**
+	 * 方案集合
+	 */
+	private List<ProgramInfoBean> programList;
+	private List<LiabilityGroupBean> groupList;
+	public List<LiabilityGroupBean> getGroupList() {
+		return groupList;
+	}
+	public void setGroupList(List<LiabilityGroupBean> groupList) {
+		this.groupList = groupList;
+	}
+	/**
+	 * @return the code
+	 * 产品编码
+	 */
+	public String getCode() {
+		return code;
+	}
+	/**
+	 * @param 产品编码
+	 */
+	public void setCode(String code) {
+		this.code = code;
+	}
+	/**
+	 *  保费计算类型：1-固定，3-浮动  4-浮动加固定
+	 */
+	public String getPremiumType() {
+		return premiumType;
+	}
+	/**
+	 * 保费计算类型：1-固定，3-浮动  4-浮动加固定
+	 */
+	public void setPremiumType(String premiumType) {
+		this.premiumType = premiumType;
+	}
+	/**
+	 * 
+	 * 是否还有附加险 0-不含附加险，1-含有附加险
+	 */
+	public String getHasAttachRisk() {
+		return hasAttachRisk;
+	}
+	/**
+	 *  是否还有附加险 0-不含附加险，1-含有附加险
+	 */
+	public void setHasAttachRisk(String hasAttachRisk) {
+		this.hasAttachRisk = hasAttachRisk;
+	}
+	/**
+	 * @return the programList
+	 *  方案集合
+	 */
+	public List<ProgramInfoBean> getProgramList() {
+		return programList;
+	}
+	/**
+	 * @param  方案集合
+	 */
+	public void setProgramList(List<ProgramInfoBean> programList) {
+		this.programList = programList;
+	}
+	/**
+	 * @return the productName
+	 */
+	public String getProductName() {
+		return productName;
+	}
+	/**
+	 * @param productName the productName to set
+	 */
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+	/**
+	 * @return the productDesc
+	 */
+	public String getProductDesc() {
+		return productDesc;
+	}
+	/**
+	 * @param productDesc the productDesc to set
+	 */
+	public void setProductDesc(String productDesc) {
+		this.productDesc = productDesc;
+	}
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+}

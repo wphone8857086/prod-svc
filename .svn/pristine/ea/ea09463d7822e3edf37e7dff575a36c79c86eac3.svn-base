@@ -1,0 +1,885 @@
+package com.jt.plt.product.service.impl;
+
+import com.jt.plt.product.entity.*;
+import com.jt.plt.product.entity.calPremium.*;
+import com.jt.plt.product.enums.PremiumFormulaEnum;
+import com.jt.plt.product.enums.ResultEnum;
+import com.jt.plt.product.mapper.*;
+import com.jt.plt.product.service.FormulaService;
+import com.jt.plt.product.service.RedisCallBackInterface;
+import com.jt.plt.product.util.*;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import static com.jt.plt.product.util.FormulaCode.*;
+
+
+/**
+ * @Description: 保费计算公式实现类
+ * @author: wephone
+ * @date: 2018/3/9 15:57
+ * @return:
+ */
+
+
+@Slf4j
+@Service
+public class FormulaServiceImpl implements FormulaService {
+    private static String product = "prod:";
+
+    private static String keyProdu = null;
+
+    private static String keyProgram = null;
+
+    private static String keyInfare = null;
+
+    private static String keyPrefor = null;
+
+    private static String keyFloatRate = null;
+
+    private static String keyFloatRateAtion = null;
+
+    private static String keyConf = null;
+
+    private static String keyLimitRelaAtion = null;
+
+    private static String keyPrcare = null;
+
+    private static String keyConfAtion = null;
+
+    int flag = 0;
+
+    @Autowired
+    ConfCoefficientMapper confCoefficientMapper;
+
+    @Autowired
+    InsuranceFactorRelaMapper insuranceFactorRelaMapper;
+
+    @Autowired
+    InsuranceProgramMapper insuranceProgramMapper;
+
+    @Autowired
+    BasicPremiumFactorMapper basicPremiumFactorMapper;
+
+    @Autowired
+    LiabilityLimitMapper liabilityLimitMapper;
+
+    @Autowired
+    LiabilityLimitValuesMapper liabilityLimitValuesMapper;
+
+    @Autowired
+    LiabilityLimitRelaMapper liabilityLimitRelaMapper;
+
+    @Autowired
+    ProductInfoMapper productInfoMapper;
+
+    @Autowired
+    PremiumFormulaMapper premiumFormulaMapper;
+
+    @Autowired
+    PremiumCalculateRuleMapper premiumCalculateRuleMapper;
+
+    @Autowired
+    FloatRateMapper floatRateMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ResultMsg countPremium(FormulaBean formulaBean) {
+        long startTime = System.currentTimeMillis();
+
+        //字段校验
+        ResultMsg resultMsg1 = verifyFormulaBean(formulaBean);
+        if (resultMsg1.getCode() != 200) {
+            return resultMsg1;
+        }
+        ResultVO verifyFormulaBean = (ResultVO) resultMsg1;
+        String premiumDesign = (String) verifyFormulaBean.getData();
+
+        // 主险基础保费
+        ProductInfo productInfo = (ProductInfo) redisTemplate.opsForValue().get(keyProdu);
+        Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
+
+        ResultMsg resultMsg = basicPremium(productInfo, formulaBean, map);
+        if (resultMsg.getCode() != 200) {
+            return resultMsg;
+        }
+        ResultVO<Map<String, BigDecimal>> basicPremium = (ResultVO<Map<String, BigDecimal>>) resultMsg;
+        map = basicPremium.getData();
+
+
+        // 主险因子
+        ResultMsg resultMsg2 = factorInfo(formulaBean, map);
+        if (resultMsg2.getCode() != 200) {
+            return resultMsg2;
+        }
+        ResultVO<Map<String, BigDecimal>> factorInfo = (ResultVO<Map<String, BigDecimal>>) resultMsg2;
+        map = factorInfo.getData();
+
+
+        //附加险保费
+        ResultMsg resultMsg3 = additionPremium(formulaBean, map);
+        if (resultMsg3.getCode() != 200) {
+            return resultMsg3;
+        }
+        ResultVO<Map<String, BigDecimal>> additionPremium = (ResultVO<Map<String, BigDecimal>>) resultMsg3;
+        map = additionPremium.getData();
+
+
+        //附加险因子
+        ResultMsg resultMsg4 = additionFactorInfo(formulaBean, map);
+        if (resultMsg4.getCode() != 200) {
+            return resultMsg4;
+        }
+        ResultVO<Map<String, BigDecimal>> additionFactorInfo = (ResultVO<Map<String, BigDecimal>>) resultMsg4;
+        map = additionFactorInfo.getData();
+
+        // 保费计算规则
+        ResultMsg resultMsg5 = premiumRule(formulaBean, map, premiumDesign);
+        if (resultMsg5.getCode() != 200) {
+            return resultMsg5;
+        }
+        ResultVO premiumRule = (ResultVO) resultMsg5;
+        premiumDesign = (String) premiumRule.getData();
+
+
+        // 对保费计算公式格式进行校验
+        FormulaVerify formulaVerify = new FormulaVerify(premiumDesign);
+        if (formulaVerify.checkValid()) {
+            BigDecimal apart;
+            try {
+                apart = MathUtil.getBigDecimal(FormulaUtil.convertToCode(premiumDesign, map));
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error(PremiumFormulaEnum.IS_HAS_UNDEFINED_VARIABLE.getMessage());
+                return ResultUtils.warnMsg(PremiumFormulaEnum.IS_HAS_UNDEFINED_VARIABLE);
+            }
+            // 总保费
+            BigDecimal grossPremium = null;
+            if (apart != null && !Objects.equals(apart, BigDecimal.ZERO)) {
+                grossPremium = apart.multiply(formulaBean.getCount());
+            }
+            log.info("******总保费******：" + (grossPremium.setScale(2, BigDecimal.ROUND_HALF_UP)).toString());
+            long endTime = System.currentTimeMillis();
+            log.info(">>>>>>>>>>>>>>>当前程序耗时：" + (endTime - startTime) + "ms");
+
+            return ResultUtils.success(grossPremium.setScale(2, BigDecimal.ROUND_HALF_UP));
+        } else {
+            return ResultUtils.warnMsg(FormulaVerify.Msg);
+        }
+    }
+
+
+    /**
+     * @param formulaBeans
+     * @return
+     */
+    @Override
+    public ResultMsg countPremiums(List<FormulaBean> formulaBeans) {
+        long startTime = System.currentTimeMillis();
+
+        BigDecimal allPremiums = BigDecimal.ZERO;
+        for (FormulaBean formulaBean : formulaBeans) {
+            //字段校验
+            ResultMsg resultMsg1 = verifyFormulaBean(formulaBean);
+            if (resultMsg1.getCode() != 200) {
+                return resultMsg1;
+            }
+            ResultVO verifyFormulaBean = (ResultVO) resultMsg1;
+            String premiumDesign = (String) verifyFormulaBean.getData();
+
+
+            // 主险基础保费
+            ProductInfo productInfo = (ProductInfo) redisTemplate.opsForValue().get(keyProdu);
+            Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
+            ResultMsg resultMsg = basicPremium(productInfo, formulaBean, map);
+            if (resultMsg.getCode() != 200) {
+                return resultMsg;
+            }
+            ResultVO<Map<String, BigDecimal>> basicPremium = (ResultVO<Map<String, BigDecimal>>) resultMsg;
+            map = basicPremium.getData();
+
+
+            // 主险因子
+            ResultMsg resultMsg2 = factorInfo(formulaBean, map);
+            if (resultMsg2.getCode() != 200) {
+                return resultMsg2;
+            }
+            ResultVO<Map<String, BigDecimal>> factorInfo = (ResultVO<Map<String, BigDecimal>>) resultMsg2;
+            map = factorInfo.getData();
+
+
+            //附加险保费
+            ResultMsg resultMsg3 = additionPremium(formulaBean, map);
+            if (resultMsg3.getCode() != 200) {
+                return resultMsg3;
+            }
+            ResultVO<Map<String, BigDecimal>> additionPremium = (ResultVO<Map<String, BigDecimal>>) resultMsg3;
+            map = additionPremium.getData();
+
+
+            //附加险因子
+            ResultMsg resultMsg4 = additionFactorInfo(formulaBean, map);
+            if (resultMsg4.getCode() != 200) {
+                return resultMsg4;
+            }
+            ResultVO<Map<String, BigDecimal>> additionFactorInfo = (ResultVO<Map<String, BigDecimal>>) resultMsg4;
+            map = additionFactorInfo.getData();
+
+
+            // 保费计算规则
+            ResultMsg resultMsg5 = premiumRule(formulaBean, map, premiumDesign);
+            if (resultMsg5.getCode() != 200) {
+                return resultMsg5;
+            }
+            ResultVO premiumRule = (ResultVO) resultMsg5;
+            premiumDesign = (String) premiumRule.getData();
+
+
+            // 对保费计算公式格式进行校验
+            FormulaVerify formulaVerify = new FormulaVerify(premiumDesign);
+            if (formulaVerify.checkValid()) {
+
+                BigDecimal apart;
+                try {
+                    apart = (BigDecimal) FormulaUtil.convertToCode(premiumDesign, map);
+                } catch (Exception e) {
+                    log.error(PremiumFormulaEnum.IS_HAS_UNDEFINED_VARIABLE.getMessage());
+                    return ResultUtils.warnMsg(PremiumFormulaEnum.IS_HAS_UNDEFINED_VARIABLE);
+                }
+                //每单保费
+                BigDecimal grossPremium = BigDecimal.ZERO;
+                if (apart != null && !Objects.equals(apart, BigDecimal.ZERO)) {
+                    grossPremium = apart.multiply(formulaBean.getCount());
+                }
+                // 总保费
+                allPremiums = allPremiums.add(grossPremium);
+            } else {
+                return ResultUtils.warnMsg(FormulaVerify.Msg);
+            }
+        }
+        log.info("******总保费******：" + (allPremiums.setScale(2, BigDecimal.ROUND_HALF_UP)).toString());
+        long endTime = System.currentTimeMillis();
+        log.info(">>>>>>>>>>>>>>>当前程序耗时：" + (endTime - startTime) + "ms");
+        return ResultUtils.success(allPremiums.setScale(2, BigDecimal.ROUND_HALF_UP));
+    }
+
+    private static Map<String, BigDecimal> otherMethod(Map<String, BigDecimal> map, ConfCoefficient confCoefficient, String factorCodeName, double parseDouble) {
+        Map<String, BigDecimal> map2 = new HashMap<String, BigDecimal>();
+        map2.put(A, new BigDecimal(parseDouble));
+        String replace = confCoefficient.getFactorValues().replace("[", "(").replace("]", ")");
+        BigDecimal factorValues = BigDecimal.valueOf((Double) FormulaUtil.convertToCode(replace, map2));
+        map.put(factorCodeName, factorValues);
+        return map;
+    }
+
+    public static Map<String, BigDecimal> switchMethod(Map<String, BigDecimal> map, List<ConfCoefficient> confCoefficients, double parseDouble, String factorCodeName, FactorInfo factorInfo) {
+        for (ConfCoefficient confCoefficient : confCoefficients) {
+            switch (confCoefficient.getOperatorType()) {
+                case "1":
+                    // =a   A=25万人次 费率 0%    安责类型加字段代码 a1001 代表 未发生生产安全事故
+                    if (parseDouble == confCoefficient.getFactorMax()) {
+                        if (FormulaUtil.pandun(confCoefficient.getFactorValues())) {
+                            map.put(factorCodeName, new BigDecimal(confCoefficient.getFactorValues()));
+                        } else {
+                            map = otherMethod(map, confCoefficient, factorCodeName, parseDouble);
+                        }
+                    }
+                    // 调整系数当前不参与计算
+                    else if (parseDouble == FormulaCode.COEF) {
+                        map.put(factorCodeName, new BigDecimal(1));
+                    }
+                    break;
+                case "2": // 方案直接定义值
+                    if (confCoefficient.getInsuranceProgramId() == Integer.parseInt(factorInfo.getStringFactor())) {
+                        map.put(factorCodeName, new BigDecimal(confCoefficient.getFactorValues()));
+                    }
+                    break;
+                case "3": // ( )  {25万人次 < A < 50万人次  [(A - 25万)/ 25万] * 20%} || 0.2
+                    if (confCoefficient.getFactorMin() < parseDouble && parseDouble < confCoefficient.getFactorMax()) {
+                        if (FormulaUtil.pandun(confCoefficient.getFactorValues())) {
+                            map.put(factorCodeName, new BigDecimal(confCoefficient.getFactorValues()));
+                        } else {
+                            map = otherMethod(map, confCoefficient, factorCodeName, parseDouble);
+                        }
+                    }
+                    break;
+                case "4": // ( ]
+                    if (confCoefficient.getFactorMin() < parseDouble && parseDouble <= confCoefficient.getFactorMax()) {
+                        if (FormulaUtil.pandun(confCoefficient.getFactorValues())) {
+                            map.put(factorCodeName, new BigDecimal(confCoefficient.getFactorValues()));
+                        } else {
+                            map = otherMethod(map, confCoefficient, factorCodeName, parseDouble);
+                        }
+                    }
+                    break;
+                case "5": // [ )
+                    if (confCoefficient.getFactorMin() <= parseDouble && parseDouble < confCoefficient.getFactorMax()) {
+                        if (FormulaUtil.pandun(confCoefficient.getFactorValues())) {
+                            map.put(factorCodeName, new BigDecimal(confCoefficient.getFactorValues()));
+                        } else {
+                            map = otherMethod(map, confCoefficient, factorCodeName, parseDouble);
+                        }
+                    }
+                    break;
+                case "6": // [ ]
+                    if (confCoefficient.getFactorMin() <= parseDouble && parseDouble <= confCoefficient.getFactorMax()) {
+                        if (FormulaUtil.pandun(confCoefficient.getFactorValues())) {
+                            map.put(factorCodeName, new BigDecimal(confCoefficient.getFactorValues()));
+                        } else {
+                            map = otherMethod(map, confCoefficient, factorCodeName, parseDouble);
+                        }
+                    }
+                    break;
+                case "7": // (-∞, a)
+                    if (parseDouble < confCoefficient.getFactorMax()) {
+                        if (FormulaUtil.pandun(confCoefficient.getFactorValues())) {
+                            map.put(factorCodeName, new BigDecimal(confCoefficient.getFactorValues()));
+                        } else {
+                            map = otherMethod(map, confCoefficient, factorCodeName, parseDouble);
+                        }
+                    }
+                    break;
+                case "8": // (-∞, a]
+                    if (parseDouble <= confCoefficient.getFactorMax()) {
+                        if (FormulaUtil.pandun(confCoefficient.getFactorValues())) {
+                            map.put(factorCodeName, new BigDecimal(confCoefficient.getFactorValues()));
+                        } else {
+                            map = otherMethod(map, confCoefficient, factorCodeName, parseDouble);
+                        }
+                    }
+                    break;
+                case "9": // (a, +∞)
+                    if (confCoefficient.getFactorMin() < parseDouble) {
+                        if (FormulaUtil.pandun(confCoefficient.getFactorValues())) {
+                            map.put(factorCodeName, new BigDecimal(confCoefficient.getFactorValues()));
+                        } else {
+                            map = otherMethod(map, confCoefficient, factorCodeName, parseDouble);
+                        }
+                    }
+                    break;
+                case "10": // [a, +∞)
+                    if (confCoefficient.getFactorMin() <= parseDouble) {
+                        if (FormulaUtil.pandun(confCoefficient.getFactorValues())) {
+                            map.put(factorCodeName, new BigDecimal(confCoefficient.getFactorValues()));
+                        } else {
+                            map = otherMethod(map, confCoefficient, factorCodeName, parseDouble);
+                        }
+                    }
+                    break;
+                default:
+                    map.put(factorCodeName, BigDecimal.ZERO);
+                    break;
+            }
+        }
+        return map;
+    }
+
+    /**
+     *
+     */
+
+    private ResultMsg premiumRule(FormulaBean formulaBean, Map<String, BigDecimal> map, String premiumDesign) {
+        List<PremiumCalculateRule> premiumCalculateRules = null;
+        keyPrcare = "prcare_" + formulaBean.getProductCode();
+        //判断key是否存在
+        Boolean flg6 = redisTemplate.hasKey(keyPrcare);
+        if (flg6) {
+            premiumCalculateRules = (List<PremiumCalculateRule>) redisTemplate.opsForValue().get(keyPrcare);
+        } else {
+            // 从数据库查询
+            Example example2 = new Example(PremiumCalculateRule.class);
+            example2.createCriteria().andEqualTo("productCode", formulaBean.getProductCode());
+            premiumCalculateRules = premiumCalculateRuleMapper.selectByExample(example2);
+            // 插入缓存
+            redisTemplate.opsForValue().set(keyConf, premiumCalculateRules);
+        }
+
+
+        if (premiumCalculateRules == null || premiumCalculateRules.size() == 0) {
+            log.info("******:----------保费计算不参与自定义规则");
+        } else {
+            String ruleFormula = premiumCalculateRules.get(0).getCalculateRulePara();
+            BigDecimal value = null;
+            try {
+                value = (BigDecimal) FormulaUtil.convertToCode(ruleFormula, map);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error(PremiumFormulaEnum.IS_HAS_UNDEFINED_VARIABLE.getMessage());
+                return ResultUtils.warnMsg(PremiumFormulaEnum.IS_HAS_UNDEFINED_VARIABLE);
+            }
+            assert value != null;
+            for (PremiumCalculateRule premiumCalculateRule : premiumCalculateRules) {
+                switch (premiumCalculateRule.getConditionFlag()) {
+                    case "01":  // 01-大于
+                        if (value.doubleValue() > 0 && value.doubleValue() > Double.parseDouble(premiumCalculateRule.getCalculateRuleValues())) {
+                            premiumDesign = premiumCalculateRule.getCalculateRuleFormula();
+                        }
+                        break;
+                    case "02": // 02-大于等于
+
+                        if (value.doubleValue() > 0 && value.doubleValue() >= Double.parseDouble(premiumCalculateRule.getCalculateRuleValues())) {
+                            premiumDesign = premiumCalculateRule.getCalculateRuleFormula();
+                        }
+                        break;
+                    case "03": // 03-小于
+                        if (value.doubleValue() < 0 && value.doubleValue() < Double.parseDouble(premiumCalculateRule.getCalculateRuleValues())) {
+                            premiumDesign = premiumCalculateRule.getCalculateRuleFormula();
+                        }
+                        break;
+                    case "04": // 04-小于等于
+                        if (value.doubleValue() < 0 && value.doubleValue() <= Double.parseDouble(premiumCalculateRule.getCalculateRuleValues())) {
+                            premiumDesign = premiumCalculateRule.getCalculateRuleFormula();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        return ResultUtils.success(premiumDesign);
+    }
+
+    /**
+     * 计算主险保费
+     *
+     * @param productInfo
+     * @param formulaBean
+     * @param map
+     * @return Map<String, BigDecimal>
+     */
+    private ResultMsg basicPremium(ProductInfo productInfo, FormulaBean formulaBean, Map<String, BigDecimal> map) {
+        if (productInfo.getProductPremiumType() == 0) {
+            if (formulaBean.getBasicPremium().equals(BigDecimal.ZERO)) {
+                map.put(BASIC, BigDecimal.ZERO);
+            } else {
+                map.put(BASIC, formulaBean.getBasicPremium());
+            }
+        } else {
+            //主险保费类型为浮动
+            BigDecimal basicPremium = BigDecimal.ZERO;
+
+            // 2> 关系表取值定义
+            List<FloatPremium> floatPremiums = formulaBean.getFloatPremiums();
+            if (floatPremiums.size() > 0) {
+                for (FloatPremium floatPremium : floatPremiums) {
+
+                    keyFloatRate = product + "limitRela_" + formulaBean.getProgId() + floatPremium.getLiabilityLimitValuesId() + floatPremium.getLimitId();
+                    ValueOperations<String, FloatRate> opsLimitR = redisTemplate.opsForValue();
+                    //判断key是否存在
+                    Boolean flg5 = redisTemplate.hasKey(keyFloatRate);
+                    FloatRate floatRate = null;
+                    LiabilityLimitValues liabilityLimitValues = null;
+                    if (flg5) {
+                        floatRate = opsLimitR.get(keyFloatRate);
+                    } else {
+                        // 从数据库查询
+                        Map<String, Object> map2 = new HashMap<String, Object>();
+                        map2.put("progId", formulaBean.getProgId());
+                        map2.put("limitId", floatPremium.getLimitId());
+                        if (floatPremium.getLiabilityLimitValuesId() == null) {
+                            map2.put("limitValues", floatPremium.getLiabilityLimitValues());
+                        } else {
+                            liabilityLimitValues = liabilityLimitValuesMapper
+                                    .selectByPrimaryKey(floatPremium.getLiabilityLimitValuesId());
+                            map2.put("limitValues", liabilityLimitValues.getLiabilityLimitValues());
+                        }
+                        floatRate = floatRateMapper.findFloatRate(map2);
+                        // 插入缓存
+                        opsLimitR.set(keyFloatRate, floatRate, 5, TimeUnit.MINUTES);
+                    }
+                    // 查询具体的限额值
+                    if (liabilityLimitValues == null) {
+                        liabilityLimitValues = liabilityLimitValuesMapper
+                                .selectByPrimaryKey(floatPremium.getLiabilityLimitValuesId());
+                    }
+                    if (floatRate == null) {
+                        return ResultUtils.warnMsg(PremiumFormulaEnum.IS_FAILD_PROGRAMVALUES);
+                    } else {
+                        if (floatPremium.getLiabilityLimitValuesId() == null) {
+                            basicPremium = basicPremium.add(BigDecimal.valueOf(floatRate.getRate() * floatPremium.getLiabilityLimitValues()));
+                        } else {
+                            basicPremium = basicPremium.add(BigDecimal.valueOf(floatRate.getRate() * liabilityLimitValues.getLiabilityLimitValues()));
+                        }
+                    }
+
+                }
+                map.put(BASIC, basicPremium);
+            } else {
+                return ResultUtils.warnMsg(PremiumFormulaEnum.IS_NULL_FLOATPREMIUMS);
+            }
+        }
+        //return map;
+        return ResultUtils.success(map);
+    }
+
+    /**
+     * 主险因子
+     *
+     * @param formulaBean
+     * @param map
+     * @return
+     */
+    private ResultMsg factorInfo(FormulaBean formulaBean, Map<String, BigDecimal> map) {
+        List<FactorInfo> factorInfos = formulaBean.getFactorInfos();
+        if (factorInfos == null) {
+            log.info("******:----------不含有主险因子");
+        } else {
+            for (FactorInfo factorInfo : factorInfos) {
+                List<ConfCoefficient> confCoefficients = new ArrayList<>();
+
+                //获取因子代码名称
+                keyInfare = product + "inFaRe_" + factorInfo.getFactorRelaId();
+                InsuranceFactorRela insuranceFactorRela = (InsuranceFactorRela) redisTemplate.opsForValue().get(keyInfare);
+                //InsuranceFactorRela insuranceFactorRela = operInFaRe.get(keyInfare);
+                if (insuranceFactorRela == null) {
+                    insuranceFactorRela = insuranceFactorRelaMapper.selectByPrimaryKey(factorInfo.getFactorRelaId());
+                }
+                String factorCodeName = insuranceFactorRela.getFactorCodeName();
+
+                keyConf = product + "conf_" + factorInfo.getFactorRelaId();
+                //判断key是否存在
+                Boolean flg6 = redisTemplate.hasKey(keyConf);
+                if (flg6) {
+                    confCoefficients = (List<ConfCoefficient>) redisTemplate.opsForValue().get(keyConf);
+                    if (confCoefficients == null || confCoefficients.size() == 0) {
+                        //
+                        Example example3 = new Example(ConfCoefficient.class);
+                        example3.createCriteria().andEqualTo("factorRelaId", factorInfo.getFactorRelaId());
+                        confCoefficients = confCoefficientMapper.selectByExample(example3);
+                    }
+                } else {
+                    // 从数据库查询
+                    Example example3 = new Example(ConfCoefficient.class);
+                    example3.createCriteria().andEqualTo("factorRelaId", factorInfo.getFactorRelaId());
+                    confCoefficients = confCoefficientMapper.selectByExample(example3);
+                    // 插入缓存
+                    redisTemplate.opsForValue().set(keyConf, confCoefficients, 100, TimeUnit.SECONDS);
+                }
+                if (!FormulaUtil.pandun(factorInfo.getStringFactor())) {
+                    map.put(factorCodeName, BigDecimal.ZERO);
+                } else {
+                    double parseDouble = Double.parseDouble(factorInfo.getStringFactor());
+                    map = switchMethod(map, confCoefficients, parseDouble, factorCodeName, factorInfo);
+                }
+
+                BigDecimal aDouble = map.get(factorCodeName);
+                if (aDouble == null) {
+                    return ResultUtils.warnMsg(PremiumFormulaEnum.IS_FAIL_FACTOR_VALUES);
+                }
+            }
+
+        }
+        return ResultUtils.success(map);
+    }
+
+    /**
+     * 计算附加险保费
+     *
+     * @param
+     * @param formulaBean
+     * @param map
+     * @return
+     */
+    private ResultMsg additionPremium(FormulaBean formulaBean, Map<String, BigDecimal> map) {
+        if (formulaBean.getAdditionPremium() == null || formulaBean.getAdditionPremium().equals(BigDecimal.ZERO)) {
+            //主险保费类型为浮动
+            List<FloatPremium> additionFloatPremiums = formulaBean.getAdditionFloatPremiums();
+            if (additionFloatPremiums != null && !additionFloatPremiums.isEmpty()) {
+                flag = 3;
+                BigDecimal additionPremium = BigDecimal.ZERO;
+                //判断方案id数据库是否存在
+                if (StringUtils.isEmpty(formulaBean.getAtionProgId())) {
+                    return ResultUtils.warnMsg(PremiumFormulaEnum.PARAMETER_IS_NULL_PRODUCTPROGRAMID);
+                } else {
+                    Example example = new Example(InsuranceProgram.class);
+                    example.createCriteria().andEqualTo("productProgramId", formulaBean.getAtionProgId());
+                    List<InsuranceProgram> insurancePrograms = insuranceProgramMapper.selectByExample(example);
+                    if (insurancePrograms == null || insurancePrograms.size() == 0) {
+                        return ResultUtils.warnMsg(PremiumFormulaEnum.IS_FAILD_PRODUCTPROGRAMID);
+                    }
+                }
+                for (FloatPremium additionFloatPremium : additionFloatPremiums) {
+                    keyFloatRateAtion = product + "limitRela_" + formulaBean.getAtionProgId() + additionFloatPremium.getLiabilityLimitValuesId() + additionFloatPremium.getLimitId();
+                    ValueOperations<String, FloatRate> opsLimitR = redisTemplate.opsForValue();
+                    //判断key是否存在
+                    Boolean flg5 = redisTemplate.hasKey(keyFloatRateAtion);
+                    FloatRate floatRate = null;
+                    LiabilityLimitValues liabilityLimitValues = null;
+                    if (flg5) {
+                        floatRate = opsLimitR.get(keyFloatRateAtion);
+                    } else {
+                        // 从数据库查询
+                        Map<String, Object> map2 = new HashMap<String, Object>();
+                        map2.put("progId", formulaBean.getAtionProgId());
+                        map2.put("limitId", additionFloatPremium.getLimitId());
+                        if (additionFloatPremium.getLiabilityLimitValuesId() == null) {
+                            map2.put("limitValues", additionFloatPremium.getLiabilityLimitValues());
+                        } else {
+                            liabilityLimitValues = liabilityLimitValuesMapper
+                                    .selectByPrimaryKey(additionFloatPremium.getLiabilityLimitValuesId());
+                            map2.put("limitValues", liabilityLimitValues.getLiabilityLimitValues());
+                        }
+                        floatRate = floatRateMapper.findFloatRate(map2);
+                        // 插入缓存
+                        opsLimitR.set(keyFloatRateAtion, floatRate, 5, TimeUnit.MINUTES);
+                    }
+                    // 查询具体的限额值
+                    if (liabilityLimitValues == null) {
+                        liabilityLimitValues = liabilityLimitValuesMapper
+                                .selectByPrimaryKey(additionFloatPremium.getLiabilityLimitValuesId());
+                    }
+
+                    if (floatRate == null) {
+                        return ResultUtils.warnMsg(PremiumFormulaEnum.IS_FAILD_PROGRAMVALUES);
+                    } else {
+                        if (additionFloatPremium.getLiabilityLimitValuesId() == null) {
+                            additionPremium = additionPremium.add(BigDecimal.valueOf(floatRate.getRate() * additionFloatPremium.getLiabilityLimitValues()));
+                        } else {
+                            additionPremium = additionPremium.add(BigDecimal.valueOf(floatRate.getRate() * liabilityLimitValues.getLiabilityLimitValues()));
+                        }
+                    }
+
+                }
+                map.put(ATION, additionPremium);
+            } else {
+                flag = 2;
+            }
+        } else {
+            map.put(ATION, formulaBean.getAdditionPremium());
+        }
+        if (flag == 2) {
+            map.put(ATION, BigDecimal.ZERO);
+        }
+        return ResultUtils.success(map);
+    }
+
+    private ResultMsg additionFactorInfo(FormulaBean formulaBean, Map<String, BigDecimal> map) {
+        List<FactorInfo> additionFactorInfos = formulaBean.getAdditionFactorInfos();
+        if (additionFactorInfos == null) {
+            log.info("******:----------不含附加险因子");
+        } else {
+            ValueOperations<String, InsuranceFactorRela> operAtionFacIn = redisTemplate.opsForValue();
+            for (FactorInfo additionFactorInfo : additionFactorInfos) {
+
+                InsuranceFactorRela insuranceFactorRela = null;
+                keyLimitRelaAtion = product + "prcare_" + additionFactorInfo.getFactorRelaId();
+                //判断key是否存在
+                Boolean flg8 = redisTemplate.hasKey(keyLimitRelaAtion);
+                if (flg8) {
+                    insuranceFactorRela = operAtionFacIn.get(keyLimitRelaAtion);
+                } else {
+                    // 从数据库查询
+                    insuranceFactorRela = insuranceFactorRelaMapper.selectByPrimaryKey(additionFactorInfo.getFactorRelaId());
+                    // 插入缓存
+                    operAtionFacIn.set(keyLimitRelaAtion, insuranceFactorRela, 5, TimeUnit.MINUTES);
+                }
+                //获取因子代码名称
+                String factorCodeName = insuranceFactorRela.getFactorCodeName();
+                List<ConfCoefficient> confCoefficients = new ArrayList<>();
+                keyConfAtion = product + "conf_" + additionFactorInfo.getFactorRelaId();
+                //判断key是否存在
+                Boolean flg7 = redisTemplate.hasKey(keyConfAtion);
+                if (flg7) {
+                    confCoefficients = (List<ConfCoefficient>) redisTemplate.opsForValue().get(keyConfAtion);
+                    if (confCoefficients == null || confCoefficients.size() == 0) {
+                        //
+                        Example example3 = new Example(ConfCoefficient.class);
+                        example3.createCriteria().andEqualTo("factorRelaId", additionFactorInfo.getFactorRelaId());
+                        confCoefficients = confCoefficientMapper.selectByExample(example3);
+                    }
+                } else {
+                    // 从数据库查询
+                    Example example3 = new Example(ConfCoefficient.class);
+                    example3.createCriteria().andEqualTo("factorRelaId", additionFactorInfo.getFactorRelaId());
+                    confCoefficients = confCoefficientMapper.selectByExample(example3);
+                    // 插入缓存
+                    redisTemplate.opsForValue().set(keyConfAtion, confCoefficients, 100, TimeUnit.SECONDS);
+                }
+                if (!FormulaUtil.pandun(additionFactorInfo.getStringFactor())) {
+                    map.put(factorCodeName, BigDecimal.ZERO);
+                } else {
+                    double parseDouble = Double.parseDouble(additionFactorInfo.getStringFactor());
+                    map = switchMethod(map, confCoefficients, parseDouble, factorCodeName, additionFactorInfo);
+                }
+                BigDecimal aDouble = map.get(factorCodeName);
+                if (aDouble == null) {
+                    return ResultUtils.warnMsg(PremiumFormulaEnum.IS_FAIL_FACTOR_VALUES);
+                }
+            }
+        }
+        return ResultUtils.success(map);
+    }
+
+    private ResultMsg verifyFormulaBean(FormulaBean formulaBean) {
+        // 添加字段校验
+        if (formulaBean.getCount() == null) {
+            return ResultUtils.warnMsg(PremiumFormulaEnum.PARAMETER_IS_NULL_NUMBEROFPEOPLE);
+        }
+
+        if (StringUtils.isEmpty(formulaBean.getProductCode())) {
+            return ResultUtils.warnMsg(PremiumFormulaEnum.PARAMETER_IS_NULL_PRODUCT_CODE);
+        }
+        keyProdu = product + "product_" + formulaBean.getProductCode();
+        ValueOperations<String, ProductInfo> operProd = redisTemplate.opsForValue();
+
+        RedisCallBackInterface<ProductInfo, String> callback = (String key) -> {
+            CallRsult callRsult = new CallRsult<String>();
+            ProductInfo productInfo = productInfoMapper.selectByPrimaryKey(key);
+            if (productInfo != null) {
+                log.error("key {} 从数据库中查询的数据不为空，缓存数据", key);
+                callRsult.setResultAndAllowCached(productInfo);
+            }
+            return callRsult;
+        };
+
+        ProductInfo productInfo = MyRedisUtils.excute(formulaBean.getProductCode(), keyProdu, callback);
+
+        if (productInfo == null) {
+            return ResultUtils.warnMsg(PremiumFormulaEnum.FAILED_PRODUCT_CODE);
+        }
+        if (productInfo.getProductPremiumType() == 0 && formulaBean.getBasicPremium() == null) {
+            return ResultUtils.warnMsg(PremiumFormulaEnum.PARAMETER_IS_NULL_PRODUCT_PREMIUM);
+        }
+        if (productInfo.getProductPremiumType() == FormulaCode.CODE1) {
+            List<FloatPremium> floatPremiums = formulaBean.getFloatPremiums();
+            if (StringUtils.isEmpty(formulaBean.getProgId())) {
+                return ResultUtils.warnMsg(PremiumFormulaEnum.PARAMETER_IS_NULL_PRODUCTPROGRAMID);
+            } else {
+                keyProgram = product + "program_" + formulaBean.getProgId();
+                ListOperations<String, List<InsuranceProgram>> inProg = redisTemplate.opsForList();
+                //判断key是否存在
+                Boolean flg2 = redisTemplate.hasKey(keyProgram);
+                if (flg2) {
+                    RedisOperations<String, List<InsuranceProgram>> insurancePrograms = inProg.getOperations();
+                    if (insurancePrograms == null) {
+                        return ResultUtils.warnMsg(PremiumFormulaEnum.IS_FAILD_PRODUCTPROGRAMID);
+                    }
+                } else {
+                    // 从数据库查询
+                    Example example = new Example(InsuranceProgram.class);
+                    example.createCriteria().andEqualTo("productProgramId", formulaBean.getProgId());
+                    List<InsuranceProgram> insurancePrograms = insuranceProgramMapper.selectByExample(example);
+                    // 插入缓存
+                    inProg.rightPushAll(keyProgram, insurancePrograms);
+                    if (insurancePrograms == null || insurancePrograms.size() == 0) {
+                        return ResultUtils.warnMsg(PremiumFormulaEnum.IS_FAILD_PRODUCTPROGRAMID);
+                    }
+                }
+
+            }
+            if (floatPremiums == null || floatPremiums.size() == 0) {
+                return ResultUtils.warnMsg(PremiumFormulaEnum.IS_NULL_FLOATPREMIUMS);
+            } else {
+                for (FloatPremium floatPremium : floatPremiums) {
+                    if (StringUtils.isEmpty(floatPremium.getLimitId())) {
+                        return ResultUtils.warnMsg(PremiumFormulaEnum.IS_NULL_LIMITID);
+                    }
+                    if (floatPremium.getLiabilityLimitValues() == null && floatPremium.getLiabilityLimitValuesId() == null) {
+                        return ResultUtils.warnMsg(PremiumFormulaEnum.IS_NULL_LIABILITYLIMITVALUESID);
+                    }
+                    if (floatPremium.getLiabilityLimitValuesId() != null) {
+                        LiabilityLimitValues liabilityLimitValues = liabilityLimitValuesMapper
+                                .selectByPrimaryKey(floatPremium.getLiabilityLimitValuesId());
+                        if (liabilityLimitValues == null) {
+                            return ResultUtils.warnMsg(PremiumFormulaEnum.IS_NULL_LIMITVALUES_ID);
+                        }
+                    }
+                }
+            }
+
+        }
+        ValueOperations<String, InsuranceFactorRela> operInFaRe = redisTemplate.opsForValue();
+
+        if (formulaBean.getFactorInfos() == null) {
+            return ResultUtils.warnMsg(PremiumFormulaEnum.PARAMETER_IS_NULL_FACTORINFOS);
+        } else {
+            List<FactorInfo> factorInfos = formulaBean.getFactorInfos();
+            for (FactorInfo factorInfo : factorInfos) {
+                if (factorInfo.getFactorRelaId() == null) {
+                    return ResultUtils.warnMsg(PremiumFormulaEnum.PARAMETER_IS_NULL_FACTORRELAID);
+                }
+                InsuranceFactorRela insuranceFactorRela = null;
+                keyInfare = product + "inFaRe_" + factorInfo.getFactorRelaId();
+                //判断key是否存在
+                Boolean flg3 = redisTemplate.hasKey(keyInfare);
+                if (flg3) {
+                    insuranceFactorRela = operInFaRe.get(keyInfare);
+                } else {
+                    // 从数据库查询
+                    insuranceFactorRela = insuranceFactorRelaMapper.selectByPrimaryKey(factorInfo.getFactorRelaId());
+                    // 插入缓存
+                    operInFaRe.set(keyInfare, insuranceFactorRela, 5, TimeUnit.MINUTES);
+                }
+                if (insuranceFactorRela == null) {
+                    return ResultUtils.warnMsg(PremiumFormulaEnum.IS_NULL_FACTOR_RELA_ID);
+                }
+                if (factorInfo.getStringFactor() == null) {
+                    return ResultUtils.warnMsg(PremiumFormulaEnum.PARAMETER_IS_NULL_STRING_FACTOR);
+                }
+            }
+        }
+
+        PremiumFormula premiumFormula = null;
+        String premiumDesign = "";
+        productInfo = operProd.get(keyProdu);
+        keyPrefor = product + "preFor" + productInfo.getProductDesginId();
+        ValueOperations<String, PremiumFormula> preFor = redisTemplate.opsForValue();
+        //判断key是否存在
+        Boolean flg4 = redisTemplate.hasKey(keyPrefor);
+        if (flg4) {
+            premiumFormula = preFor.get(keyPrefor);
+        } else {
+            // 从数据库查询
+            premiumFormula = premiumFormulaMapper.selectByPrimaryKey(productInfo.getProductDesginId());
+            // 插入缓存
+            preFor.set(keyPrefor, premiumFormula, 5, TimeUnit.MINUTES);
+        }
+        if (premiumFormula != null) {
+            premiumDesign = premiumFormula.getPremiumDesign().replace("[", "(").replace("]", "");
+        } else {
+            return ResultUtils.warnMsg(PremiumFormulaEnum.IS_FAILD_PRODUCT_FORMULA);
+        }
+        Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
+        if (formulaBean.getFactorInfos().size() > 0 && formulaBean.getAdditionFactorInfos() == null) {
+            if (FormulaUtil.countFactor(premiumDesign) != (formulaBean.getFactorInfos().size())) {
+                return ResultUtils.warnMsg(PremiumFormulaEnum.IS_FAILD_FORMULA_FACTORS);
+            }
+        }
+        //对附加险进行校验
+        if (formulaBean.getAdditionFactorInfos() == null) {
+            log.info("******:----------不含附加险因子");
+        } else {
+            if (FormulaUtil.countFactor(premiumDesign) != (formulaBean.getFactorInfos().size() + formulaBean.getAdditionFactorInfos().size())) {
+                return ResultUtils.warnMsg(PremiumFormulaEnum.IS_FAILD_FORMULA_FACTORS);
+            }
+            List<FactorInfo> additionFactorInfos = formulaBean.getAdditionFactorInfos();
+            for (FactorInfo additionFactorInfo : additionFactorInfos) {
+                if (additionFactorInfo.getStringFactor() == null) {
+                    return ResultUtils.warnMsg(PremiumFormulaEnum.PARAMETER_IS_NULL_STRING_FACTOR);
+                }
+                if (additionFactorInfo.getFactorRelaId() == null) {
+                    return ResultUtils.warnMsg(PremiumFormulaEnum.PARAMETER_IS_NULL_FACTORRELAID);
+                }
+            }
+        }
+        return ResultUtils.success(premiumDesign);
+    }
+
+
+}

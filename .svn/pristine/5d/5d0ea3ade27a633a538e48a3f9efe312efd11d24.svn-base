@@ -1,0 +1,201 @@
+package com.jt.plt.product.controller;
+
+import com.jt.plt.product.dto.*;
+import com.jt.plt.product.enums.ResultEnum;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+
+@RestController
+
+@RequestMapping(value = "test")
+public class RemotTestController {
+
+
+
+    @GetMapping(value="/svct", produces={MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public String svct() {
+        System.out.println("==========服务调用成功1111===========");
+        return "success";
+    }
+
+    /**
+     * 查询产品详情示例
+     * @param id 产品id
+     * @return
+     */
+    /*@GetMapping(value="/productdetailsvc", produces={MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public @ResponseBody ResultDTO<ProductInfoDTO> svc(@RequestParam("id") String id) {
+        ResultDTO<ProductInfoDTO> resultDTO = new ResultDTO();
+        ProductInfoDTO productInfo = new ProductInfoDTO();
+        productInfo.setDescription("test");
+        productInfo.setLogoUrl("test");
+        productInfo.setClauseFileName("wywywyw");
+        ArrayList<InusureCompanyDTO> inusureCompanyList = new ArrayList<InusureCompanyDTO>();
+        InusureCompanyDTO inusureCompanyDTO = new InusureCompanyDTO();
+        inusureCompanyDTO.setName("intest");
+        inusureCompanyList.add(inusureCompanyDTO);
+        productInfo.setInusureCompanyList(inusureCompanyList);
+        ArrayList<ProgDTO> progList = new ArrayList<ProgDTO>();
+        if(id.equals("222346sss")){
+            productInfo.setId("222346sss");
+            productInfo.setName("道路危险货物运输承运人责任险");
+            ProgDTO progDTO = new ProgDTO();
+            progList.add(progDTO);
+            progDTO.setName("方案1");
+            progDTO.setId("111");
+            progDTO.setPremium( BigDecimal.TEN);
+
+            ArrayList<LiabilityGroupDTO> liabilityGroupList = new ArrayList<LiabilityGroupDTO>();
+            progDTO.setLiabilityGroupList(liabilityGroupList);
+            LiabilityGroupDTO liabilityGroupDTO = new LiabilityGroupDTO();
+            liabilityGroupList.add(liabilityGroupDTO);
+            liabilityGroupDTO.setName("默认值liabilityGroupDTO");
+            ArrayList<LiabilityDTO> liabilityList = new ArrayList<LiabilityDTO>();
+            liabilityGroupDTO.setLiabilityList(liabilityList);
+            LiabilityDTO liabilityDTO_third = new LiabilityDTO();
+            LiabilityDTO liabilityDTO_goods = new LiabilityDTO();
+            liabilityList.add(liabilityDTO_third);
+            liabilityList.add(liabilityDTO_goods);
+            ArrayList<LimitDTO> limitList_third = new ArrayList<LimitDTO>();
+            ArrayList<LimitDTO> limitList_goods = new ArrayList<LimitDTO>();
+            liabilityDTO_third.setLimitList(limitList_third);
+            liabilityDTO_goods.setLimitList(limitList_goods);
+            for (int i = 0; i <7 ; i++) {
+                LimitDTO limitthird = new LimitDTO();
+                LimitDTO limitgoods = null;
+                if(i<4){
+                    limitgoods = new LimitDTO();
+                }
+                if(i==0){
+                    limitthird.setDescription("50-100万元6档可选，100万元以上自定义限额");
+                    limitgoods.setDescription("于第三者责任保险部分的每次事故责任限额共用");
+                    int money1 = 50;
+                    ArrayList<ValueDTO> valueDTOS = new ArrayList();
+                    for (int j = 0; j <6 ; j++) {
+                        ValueDTO valueDTO = new ValueDTO();
+                        money1 = money1+(j*10);
+                        valueDTO.setValue(money1+"");
+                        valueDTOS.add(valueDTO);
+                    }
+                    limitthird.setValueList(valueDTOS);
+                    limitList_third.add(limitthird);
+                    limitList_goods.add(limitgoods);
+                }else if(i==1){
+                    limitthird.setDescription("40-100万7档可选");
+                    limitgoods.setDescription("于第三者责任保险部分的每次事故责任限额共用");
+                    int money1 = 40;
+                    ArrayList<ValueDTO> valueDTOS = new ArrayList();
+                    for (int j = 0; j <7 ; j++) {
+                        ValueDTO valueDTO = new ValueDTO();
+                        money1 = money1+(j*10);
+                        valueDTO.setValue(money1+"");
+                        valueDTOS.add(valueDTO);
+                    }
+                    limitthird.setValueList(valueDTOS);
+                    limitList_third.add(limitthird);
+                    limitList_goods.add(limitgoods);
+                }else if(i==2){
+                    limitthird.setDescription("每次事故责任限额的2倍");
+                    limitgoods.setDescription("每次事故责任限额的20%");
+                    limitList_third.add(limitthird);
+                    limitList_goods.add(limitgoods);
+                }else if(i==3){
+                    limitthird.setDescription("每次事故责任限额的20%");
+                    limitgoods.setDescription("积累责任限额的20%");
+                    limitList_third.add(limitthird);
+                    limitList_goods.add(limitgoods);
+                }else if(i==4){
+                    limitthird.setDescription("积累责任限额的20%");
+                    limitList_third.add(limitthird);
+                }else if(i==5){
+                    limitthird.setDescription("每次事故责任限额的30%");
+                    limitList_third.add(limitthird);
+                }else if(i==6){
+                    limitthird.setDescription("积累责任限额的30%");
+                    limitList_third.add(limitthird);
+                }
+            }
+        }else{
+            productInfo.setId("222346sssx");
+            productInfo.setName("道路客运承运人责任险");
+            for(int i=0;i<7;i++){
+                ProgDTO progDTO = new ProgDTO();
+                progDTO.setName("方案"+(i+1));
+                progDTO.setId("11"+i);
+                BigDecimal personedu = BigDecimal.ZERO;
+                if(i==0){
+                    progDTO.setPremium(new BigDecimal(112));
+                    personedu = new BigDecimal(40);
+                }else if(i==1){
+                    progDTO.setPremium(new BigDecimal(125));
+                    personedu = new BigDecimal(50);
+                }else if(i==2){
+                    progDTO.setPremium(new BigDecimal(142));
+                    personedu = new BigDecimal(60);
+                }else if(i==3){
+                    progDTO.setPremium(new BigDecimal(162));
+                    personedu = new BigDecimal(60);
+                }else if(i==4){
+                    progDTO.setPremium(new BigDecimal(174));
+                    personedu = new BigDecimal(80);
+                }else if(i==5){
+                    progDTO.setPremium(new BigDecimal(184));
+                    personedu = new BigDecimal(90);
+                }else if(i==6){
+                    progDTO.setPremium(new BigDecimal(202));
+                    personedu = new BigDecimal(100);
+                }
+                LiabilityGroupDTO liabilityGroupDTO = new LiabilityGroupDTO();
+                liabilityGroupDTO.setName("默认值");
+                ArrayList<LiabilityDTO> liabilityList = new ArrayList<LiabilityDTO>();
+                LiabilityDTO liabilityDTO = new LiabilityDTO();
+                ArrayList<LimitDTO> limitList = new ArrayList<LimitDTO>();
+                for (int j = 0; j <6 ; j++) {
+                    LimitDTO limitDTO = new LimitDTO();
+                    limitDTO.setName("limitDTO");
+                    ArrayList<ValueDTO> valueList = new ArrayList<ValueDTO>();
+                    ValueDTO valueDTO = new ValueDTO();
+                    valueDTO.setValue(personedu.toString());
+                    valueList.add(valueDTO);
+                    limitDTO.setValueList(valueList);
+                    if(j==0){
+                        limitDTO.setName("每人责任限额（万元）");
+                    }else if(j==1){
+                        limitDTO.setDescription("同每车每次事故责任限额");
+                        limitDTO.setName("每车累计责任限额");
+                    }else if(j==2){
+                        limitDTO.setDescription("每人责任限额*车辆核定载人数（含司乘座数）");
+                        limitDTO.setName("每车每次事故责任限额");
+                    }else if(j==3){
+                        limitDTO.setDescription("每人责任限额的5%，在每人责任限额之外计算");
+                        limitDTO.setName("每人财产损失责任限额");
+                    }else if(j==4){
+                        limitDTO.setDescription("每车累计责任限额的5%");
+                        limitDTO.setName("每车每次事故法律费用责任限额");
+                    }else if(j==5){
+                        limitDTO.setDescription("每车累计责任限额的30%");
+                        limitDTO.setName("每车累计法律费用责任限额");
+                    }
+                    limitList.add(limitDTO);
+                }
+                liabilityDTO.setLimitList(limitList);
+                liabilityList.add(liabilityDTO);
+                liabilityGroupDTO.setLiabilityList(liabilityList);
+                ArrayList<LiabilityGroupDTO> liabilityGroupList = new ArrayList<LiabilityGroupDTO>();
+                liabilityGroupList.add(liabilityGroupDTO);
+                progDTO.setLiabilityGroupList(liabilityGroupList);
+                progList.add(progDTO);
+            }
+        }
+        productInfo.setProgList(progList);
+        System.out.println("==========服务调用成功1111===========");
+        resultDTO.setMsg("成功");
+        resultDTO.setData(productInfo);
+        resultDTO.setRc(ResultEnum.SUCCESS.getRc());
+        return resultDTO;
+    }*/
+
+}

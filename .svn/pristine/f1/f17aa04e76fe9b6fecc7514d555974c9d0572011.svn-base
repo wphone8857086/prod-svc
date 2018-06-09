@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.InsuranceProgramMapper">
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.InsuranceProgram">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="program_code" jdbcType="VARCHAR" property="programCode" />
+    <result column="program_name" jdbcType="VARCHAR" property="programName" />
+    <result column="program_desc" jdbcType="VARCHAR" property="programDesc" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="basic_premium_type" jdbcType="VARCHAR" property="basicPremiumType" />
+    <result column="basic_premium" jdbcType="REAL" property="basicPremium" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="valid_time" jdbcType="TIMESTAMP" property="validTime" />
+    <result column="unvalid_time" jdbcType="TIMESTAMP" property="unvalidTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="basic_premium_factor" jdbcType="VARCHAR" property="basicPremiumFactor" />
+    <result column="liability_group_id" jdbcType="VARCHAR" property="liabilityGroupId" />
+    <result column="liability_group_name" jdbcType="VARCHAR" property="liabilityGroupName" />
+    <result column="display_no" jdbcType="INTEGER" property="displayNo" />
+    <result column="is_display" jdbcType="VARCHAR" property="isDisplay" />
+    <result column="reserved" jdbcType="VARCHAR" property="reserved" />
+  </resultMap>
+  
+  <resultMap id="liabilityVO" type="com.jt.plt.product.vo.InsuranLiabilityVO">
+	    <result column="liability_id" jdbcType="VARCHAR" property="insuranceLiabilityId" />
+	    <result column="liability_name" jdbcType="VARCHAR" property="insuranceLiabilityName" />
+	</resultMap>
+  <resultMap id="insuranLimitVO" type="com.jt.plt.product.vo.InsuranLimitVO">
+	    <result column="limit_id" jdbcType="VARCHAR" property="liabilityLimitId" />
+	    <result column="limit_name" jdbcType="VARCHAR" property="liabilityLimitName" />
+	</resultMap>
+  <resultMap id="limitValuesVO" type="com.jt.plt.product.vo.LimitValuesVO">
+	    <result column="limit_values_id" jdbcType="BIGINT" property="liabilityLimitValuesId" />
+	    <result column="limit_values" jdbcType="VARCHAR" property="liabilityLimitValues" />
+	    <result column="calculation_type" jdbcType="VARCHAR" property="calculationType" />
+	     <result column="rate" jdbcType="DOUBLE" property="rate" />
+  </resultMap>
+
+  <select id="findLiability" resultMap="liabilityVO">
+  	SELECT lr.liability_id,lr.liability_name
+	FROM t_liability_limit_rela lr,t_insurance_program ip
+	WHERE lr.product_program_id = ip.product_program_id
+	AND ip.product_code = #{productCode} 
+	AND lr.`status` = '1'
+	AND ip.`status` = '1'
+	GROUP BY lr.liability_id
+  </select>
+  
+  <select id="findLimit" resultMap="insuranLimitVO">
+  	SELECT lr.limit_id,lr.limit_name
+	FROM t_liability_limit_rela lr,t_insurance_program ip
+	WHERE lr.product_program_id = ip.product_program_id
+	AND ip.product_code = #{productCode} 
+	AND lr.liability_id = #{liabilityId}
+	AND lr.`status` = '1'
+	AND ip.`status` = '1'
+	GROUP BY lr.limit_id
+  </select>
+  <select id="findLimitValues" resultMap="limitValuesVO">
+  	SELECT lr.limit_values_id,lr.limit_values,lr.rate,lr.calculation_type
+	FROM t_liability_limit_rela lr,t_insurance_program ip
+	WHERE lr.product_program_id = ip.product_program_id
+	AND ip.product_code = #{productCode}
+	AND lr.liability_id= #{liabilityId}
+	AND lr.limit_id= #{limitId}
+	AND lr.`status` = '1'
+	AND ip.`status` = '1'
+  </select>
+  
+  <!-- 固定保费 -->
+   <select id="findFixLiability" resultMap="liabilityVO">
+  	SELECT lr.liability_id,lr.liability_name
+	FROM t_liability_limit_rela lr
+	WHERE lr.product_program_id = #{productProgramId}
+	AND lr.`status` = '1'
+	GROUP BY lr.liability_id
+  </select>
+   <select id="findFixLimit" resultMap="insuranLimitVO">
+  	SELECT lr.limit_id,lr.limit_name
+	FROM t_liability_limit_rela lr
+	WHERE lr.product_program_id = #{productProgramId}
+	AND lr.liability_id = #{liabilityId}
+	AND lr.`status` = '1'
+	GROUP BY lr.limit_id
+  </select>
+   <select id="findFixLimitValues" resultMap="limitValuesVO">
+  	SELECT lr.limit_values_id,lr.limit_values,lr.calculation_type
+	FROM t_liability_limit_rela lr
+	WHERE lr.product_program_id = #{productProgramId}
+	AND lr.liability_id = #{liabilityId}
+	AND lr.limit_id= #{limitId}
+	AND lr.`status` = '1'
+	GROUP BY lr.liability_id
+  </select>
+	<select id="selectByProgramCode" parameterType="string" resultMap="BaseResultMap">
+        select basic_premium,risk_flag,basic_premium_type,status  from t_insurance_program
+        where program_code= #{programCode}
+	</select>
+</mapper>

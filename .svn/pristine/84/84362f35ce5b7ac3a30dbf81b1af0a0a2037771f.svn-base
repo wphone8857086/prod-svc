@@ -1,0 +1,276 @@
+package com.jt.plt.product.enums;
+/**   
+ * 描述：保费计算公式枚举类
+ * 作者： wephone   
+ * 创建日期： 2018年3月13日 上午11:20:17
+ * 版权：江泰保险经纪股份有限公司
+ */
+public enum PremiumFormulaEnum {
+
+    /**
+     * 保费计算公式添加失败
+      */
+	ADD_FAILED_PREMIUMFORMULA(40701,"保费计算公式添加失败"),
+	
+	/**
+	 * 调整因子信息添加失败
+	 */
+	ADD_FAILED_CONFCOEFFICIENT(40702,"调整因子信息添加失败"),
+	/**
+	 * 因子编码信息修改失败
+	 */
+	UPATE_FAILED_INSURANCE_FACTOR_RELA(40703,"因子编码信息修改失败"),
+	
+	/**
+	 * 保费计算公式修改失败
+	 */
+	UPDATE_FAILED_PREMIUMFORMULA(30701,"保费计算公式修改失败"),
+	/**
+	 * 因子编码对象修改失败
+	 */
+	UPDATE_FAILED_INSURANCE_FACTOR_RELA(30702,"因子编码对象修改失败"),
+	/**
+	 * 产品编码数据库中不存在
+	 */
+	FAILED_PRODUCT_CODE(30703,"产品编码数据库中不存在"),
+
+	/**
+	 * 因子编码数据库不存在
+	 */
+	IS_NULL_FACTOR_RELA_ID(30704,"因子编码数据库不存在"),
+
+	/**
+	 * 因子编码类型不对
+	 */
+	IS_FAILD_FACTOR_RELA_ID(30705,"因子编码类型不对"),
+	/**
+	 * 因子费率输入值不符和要求
+	 */
+	IS_FAIL_FACTOR_VALUES(30706,"因子费率输入值不符和要求"),
+
+	/**
+	 * 当前产品已配置保费因子
+	 */
+	IS_FAILD_INSURANCEFACTORRELA(30707,"当前产品已配置保费因子"),
+
+	/**
+	 * 区间运算符类型不符合要求
+	 */
+	IS_FAILD_OPERATORTYPE(30708,"区间运算符类型不符合要求"),
+
+	/**
+	 * 最大值不能小于或者等于最小值
+	 */
+	IS_FAILD_FACTORMAX_FACTORMIN(30709,"最大值不能小于或者等于最小值"),
+
+	/**
+	 * 保费计算公式id数据库不存在
+	 */
+	IS_NULL_PREMIUM_FORMULA_ID(30710,"保费计算公式id数据库不存在"),
+
+	/**
+	 * 当前因子编码下没有配置对应区间值
+	 */
+	IS_FAILD_NULL_CONFCOEFFICIENT(30711,"当前因子编码下没有配置对应区间值"),
+
+	/**
+	 * 计算公式与因子数量不匹配
+	 */
+	IS_FAILD_FORMULA_FACTORS(30712,"计算公式与因子数量不匹配"),
+
+	/**
+	 * 产品方案id错误
+	 */
+	IS_FAILD_PRODUCTPROGRAMID(30713,"产品方案id错误"),
+	/**
+	 * 没有匹配的方案数据值
+	 */
+	IS_FAILD_PROGRAMVALUES(30714,"没有匹配的方案数据值"),
+
+	/**
+	 * 当前产品没有配置保费计算公式
+	 */
+	IS_FAILD_PRODUCT_FORMULA(30715,"当前产品没有配置保费计算公式"),
+
+	/**
+	 * 含有未定义的变量
+	 */
+     IS_HAS_UNDEFINED_VARIABLE(30716,"含有未定义的变量"),
+
+	/**
+	 * 保费计算公式不能为空
+	 */
+	PARAMETER_IS_NULL_PREMIUM_DESIGN(10701,"保费计算公式不能为空"),
+	/**
+	 * 因子编码信息对象不能为空
+	 */
+	PARAMETER_IS_NULL_PREMIUMFORMULAVO(10702,"因子编码信息对象不能为空"),
+	/**
+	 * 因子编码不能为空
+	 */
+	PARAMETER_IS_NULL_FACTORRELAID(10703,"因子编码不能为空"),
+	/**
+	 * 调整因子视图信息不能为空
+	 */
+	PARAMETER_IS_NULL_CONFCOEFFICIENT(10704,"调整因子视图信息不能为空"),
+	/**
+	 * 因子取值不能为空
+	 */
+	PARAMETER_IS_NULL_FACTOR_VALUES(10705,"因子取值不能为空"),
+	/**
+	 * 因子编码不能为空
+	 */
+	PARAMETER_IS_NULL_FACTOR_RELA_ID(10706,"因子编码不能为空"),
+	/**
+	 * 调整因子最大值不能为空
+	 */
+	PARAMETER_IS_NULL_FACTORMAX(10707,"调整因子最大值不能为空"),
+	/**
+	 * 调整因子最小值不能为空
+	 */
+	PARAMETER_IS_NULL_FACTORMIN(10708,"调整因子最小值不能为空"),
+
+	/**
+	 * 调整因子最大值或最小值不能为空
+	 */
+	PARAMETER_IS_NULL_FACTOR(10709,"调整因子最大值或最小值不能为空"),
+	/**
+	 * 调整因子视图集合中有相同的对象
+	 */
+	PARAM_ERROR_CONFCOEFFICIENT(10706,"调整因子视图集合中有相同的对象"),
+	
+	/**
+	 * 保费计算公式因子数量有误
+	 */
+	FAILED_PREMIUMFORMULA(10707,"保费计算公式因子数量有误"),
+	/**
+	 * 产品编码不能为空
+	 */
+	PARAMETER_IS_NULL_PRODUCT_CODE(10708,"产品编码不能为空"),
+
+	/**
+	 * 方案id不能为空
+	 */
+	PARAMETER_IS_NULL_PRODUCTPROGRAMID(10709,"方案id不能为空"),
+	/**
+	 * 参保人数不能为空
+	 */
+	PARAMETER_IS_NULL_NUMBEROFPEOPLE(10710,"参保人数不能为空"),
+	/**
+	 * 因子信息对象不能为空
+	 */
+	PARAMETER_IS_NULL_FACTORINFOS(10711,"因子信息对象不能为空"),
+	/**
+	 * 区间运算符类型不能为空
+	 */
+	PARAMETER_IS_NULL_OPERATOR_TYPE(10712,"区间运算符类型不能为空"),
+
+	/**
+	 * 区间运算符类型为2时，方案id不能为空
+	 */
+	PARAMETER_IS_NULL_PRODUCTPROGRAM_ID(10713,"区间运算符类型为2时，方案id不能为空"),
+
+	/**
+	 * 区间运算符类型为1时，区间文本描述不能为空
+	 */
+	PARAMETER_IS_NULL_OPERATOR_DESC(10714,"区间运算符类型为1时，区间文本描述不能为空"),
+
+	/**
+	 * 因子输入具体值不能为空
+	 */
+	PARAMETER_IS_NULL_STRING_FACTOR(10715,"因子输入具体值不能为空"),
+
+	/**
+	 * 保费计算公式id不能为空
+	 */
+	PARAMETER_IS_NULL_PREMIUMFORMULA_ID(10716,"保费计算公式id不能为空"),
+
+	/**
+	 * 基础保费不能为空
+	 */
+	PARAMETER_IS_NULL_PRODUCT_PREMIUM(10721,"保费计算类型为固定，基础保费不能为空"),
+
+	/**
+	 * 主险浮动保费集合不能为空
+	 */
+	IS_NULL_FLOATPREMIUMS(10722,"主险浮动保费集合不能为空"),
+
+	/**
+	 * 限额值id不能为空
+	 */
+	IS_NULL_LIABILITYLIMITVALUESID(10723,"限额值id不能为空"),
+
+	/**
+	 * 保费计算公式文本描述不能为空
+	 */
+	IS_NULL_PREMIUMDESIGNDESC(10724,"保费计算公式文本描述不能为空"),
+
+	/**
+	 * 自定义限额值不能为空
+	 */
+	IS_NULL_LIABILITY_LIMIT_VALUES(10725,"自定义限额值不能为空"),
+
+	/**
+	 * 满足规则后的新公式不能为空
+	 */
+	IS_NULL_CALCULATERULEFORMULA(10726,"满足规则后的新公式不能为空"),
+
+	/**
+	 * 保费规则名称不能为空
+	 */
+	IS_NULL_CALCULATERULENAME(10727,"保费规则名称不能为空"),
+	/**
+	 * 规则公式不能为空
+	 */
+	IS_NULL_CALCULATERULEPARA(10728,"规则公式不能为空"),
+	/**
+	 * 规则值描述不能为空
+	 */
+	IS_NULL_CALCULATERULEPARADES(10729,"规则值描述不能为空"),
+
+	/**
+	 * 规则参数值不能为空
+	 */
+	IS_NULL_CALCULATERULEVALUES(10730,"规则参数值不能为空"),
+
+	/**
+	 * 规则计算条件不能为空
+	 */
+	IS_NULL_CONDITIONFLAG(10731,"规则计算条件不能为空"),
+	/**
+	 * 保费计算公式描述超过限制
+	 */
+	IS_BEYONG_LENGTH_PREMIUMDESIGNDESC(10732,"保费计算公式描述超过限制"),
+	/**
+	 * 保费计算公式长度过限
+	 */
+	IS_BEYONG_LENGTH_PREMIUMDESIGN(10733,"保费计算公式长度过限"),
+	/**
+	 * 限额ID不能为空
+	 */
+	IS_NULL_LIMITID(10734,"限额ID不能为空"),
+	/**
+	 * 限额值ID数据库不存在
+	 */
+	IS_NULL_LIMITVALUES_ID(10735,"限额值ID数据库不存在"),
+	;
+
+
+
+	private Integer code;
+
+	private String message;
+
+	PremiumFormulaEnum(Integer code, String message) {
+		this.code = code;
+		this.message = message;
+	}
+
+	public Integer getCode() {
+		return code;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+}

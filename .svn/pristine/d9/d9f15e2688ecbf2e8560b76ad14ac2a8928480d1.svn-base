@@ -1,0 +1,15 @@
+package com.jt.plt.product.mapper;
+
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import com.jt.plt.product.base.MyMapper;
+import com.jt.plt.product.entity.FloatRate;
+
+@Repository
+public interface FloatRateMapper extends MyMapper<FloatRate> {
+
+    FloatRate findFloatRate(Map<String, Object> map);
+
+}

@@ -1,0 +1,253 @@
+package com.jt.plt.product.entity;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Table(name = "t_liability_limit")
+public class LiabilityLimit implements Serializable {
+
+    private static final long serialVersionUID = -1L;
+    /**
+     * 责任限额id
+     */
+    @Id
+    @Column(name = "liability_limit_id")
+    private String liabilityLimitId;
+    
+    /**
+     * 责任限额名称
+     */
+    @Column(name = "liability_limit_name")
+    private String liabilityLimitName;
+
+    /**
+     * 责任限额描述
+     */
+    @Column(name = "liability_limit_desc")
+    private String liabilityLimitDesc;
+
+    /**
+     * 所属责任编码
+     */
+    @Column(name = "insurance_liability_id")
+    private String insuranceLiabilityId;
+
+    /**
+     * 责任名称
+     */
+    @Column(name = "insurance_liability_name")
+    private String insuranceLiabilityName;
+
+    /**
+     * 责任生效起期
+     */
+    @Column(name = "limit_begin_date")
+    private Date limitBeginDate;
+
+    /**
+     * 责任生效止期
+     */
+    @Column(name = "limit_end_date")
+    private Date limitEndDate;
+
+    /**
+     * 创建时间
+     */
+    @Column(name = "create_time")
+    private Date createTime;
+
+    /**
+     * 修改时间
+     */
+    @Column(name = "modify_time")
+    private Date modifyTime;
+    
+    /**
+     * 限额关联限额值
+     * 限额---》限额值（一对多）
+     
+    private List<LiabilityLimitValues> liabilityLimitValues;
+    */
+   
+
+	
+
+	/**
+     * 获取责任限额id
+     *
+     * @return liability_limit_id - 责任限额id
+     */
+    public String getLiabilityLimitId() {
+        return liabilityLimitId;
+    }
+
+    /**
+     * 设置责任限额id
+     *
+     * @param liabilityLimitId 责任限额id
+     */
+    public void setLiabilityLimitId(String liabilityLimitId) {
+        this.liabilityLimitId = liabilityLimitId;
+    }
+
+    /**
+     * 获取责任限额名称
+     *
+     * @return liability_limit_name - 责任限额名称
+     */
+    public String getLiabilityLimitName() {
+        return liabilityLimitName;
+    }
+
+    /**
+     * 设置责任限额名称
+     *
+     * @param liabilityLimitName 责任限额名称
+     */
+    public void setLiabilityLimitName(String liabilityLimitName) {
+        this.liabilityLimitName = liabilityLimitName;
+    }
+
+    /**
+     * 获取责任限额描述
+     *
+     * @return liability_limit_desc - 责任限额描述
+     */
+    public String getLiabilityLimitDesc() {
+        return liabilityLimitDesc;
+    }
+
+    /**
+     * 设置责任限额描述
+     *
+     * @param liabilityLimitDesc 责任限额描述
+     */
+    public void setLiabilityLimitDesc(String liabilityLimitDesc) {
+        this.liabilityLimitDesc = liabilityLimitDesc;
+    }
+
+    /**
+     * 获取所属责任编码
+     *
+     * @return insurance_liability_id - 所属责任编码
+     */
+    public String getInsuranceLiabilityId() {
+        return insuranceLiabilityId;
+    }
+   
+    /**
+     * 设置所属责任编码
+     *
+     * @param insuranceLiabilityId 所属责任编码
+     */
+    public void setInsuranceLiabilityId(String insuranceLiabilityId) {
+        this.insuranceLiabilityId = insuranceLiabilityId;
+    }
+
+    /**
+     * 获取责任名称
+     *
+     * @return insurance_liability_name - 责任名称
+     */
+    public String getInsuranceLiabilityName() {
+        return insuranceLiabilityName;
+    }
+
+    /**
+     * 设置责任名称
+     *
+     * @param insuranceLiabilityName 责任名称
+     */
+    public void setInsuranceLiabilityName(String insuranceLiabilityName) {
+        this.insuranceLiabilityName = insuranceLiabilityName;
+    }
+
+    /**
+     * 获取责任生效起期
+     *
+     * @return limit_begin_date - 责任生效起期
+     */
+    public Date getLimitBeginDate() {
+        return limitBeginDate;
+    }
+
+    /**
+     * 设置责任生效起期
+     *
+     * @param limitBeginDate 责任生效起期
+     */
+    public void setLimitBeginDate(Date limitBeginDate) {
+        this.limitBeginDate = limitBeginDate;
+    }
+
+    /**
+     * 获取责任生效止期
+     *
+     * @return limit_end_date - 责任生效止期
+     */
+    public Date getLimitEndDate() {
+        return limitEndDate;
+    }
+
+    /**
+     * 设置责任生效止期
+     *
+     * @param limitEndDate 责任生效止期
+     */
+    public void setLimitEndDate(Date limitEndDate) {
+        this.limitEndDate = limitEndDate;
+    }
+
+    /**
+     * 获取创建时间
+     *
+     * @return create_time - 创建时间
+     */
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * 设置创建时间
+     *
+     * @param createTime 创建时间
+     */
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    /**
+     * 获取修改时间
+     *
+     * @return modify_time - 修改时间
+     */
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    /**
+     * 设置修改时间
+     *
+     * @param modifyTime 修改时间
+     */
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+	@Override
+	public String toString() {
+		return "LiabilityLimit [liabilityLimitId=" + liabilityLimitId + ", liabilityLimitName=" + liabilityLimitName
+				+ ", liabilityLimitDesc=" + liabilityLimitDesc + ", insuranceLiabilityId=" + insuranceLiabilityId
+				+ ", insuranceLiabilityName=" + insuranceLiabilityName + ", limitBeginDate=" + limitBeginDate
+				+ ", limitEndDate=" + limitEndDate + ", createTime=" + createTime + ", modifyTime=" + modifyTime + "]";
+	}
+
+	
+
+
+    
+}

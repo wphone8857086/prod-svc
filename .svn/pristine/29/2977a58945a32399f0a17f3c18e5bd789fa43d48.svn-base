@@ -1,0 +1,222 @@
+package com.jt.plt.product.entity;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Table(name = "t_premium_formula")
+public class PremiumFormula implements Serializable {
+
+    private static final long serialVersionUID = -1L;
+    /**
+     * 保费计算公式id
+     */
+    @Id
+    @Column(name = "premium_formula_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer premiumFormulaId;
+
+    /**
+     * 保费计算公式，规则引擎将自动解析，P=B*（1+a）（1…n）+A（1…n）*（1+Y）(1..n)+C（1…n）*（1+Y）(1..n)+…
+     */
+    @Column(name = "premium_design")
+    private String premiumDesign;
+
+    /**
+     * 保费计算公式 文本描述
+     */
+    @Column(name = "premium_design_desc")
+    private String premiumDesignDesc;
+
+    /**
+     * 状态,0-失效，1-生效
+     */
+    private String status;
+
+    /**
+     * 生效时间
+     */
+    @Column(name = "valid_time")
+    private Date validTime;
+
+    /**
+     * 失效时间
+     */
+    @Column(name = "unvalid_time")
+    private Date unvalidTime;
+
+    /**
+     * 修改时间
+     */
+    @Column(name = "modify_time")
+    private Date modifyTime;
+
+    /**
+     * 创建时间
+     */
+    @Column(name = "create_time")
+    private Date createTime;
+
+    /**
+     * 创建人
+     */
+    @Column(name = "create_user")
+    private String createUser;
+
+    public String getPremiumDesignDesc() {
+        return premiumDesignDesc;
+    }
+
+    public void setPremiumDesignDesc(String premiumDesignDesc) {
+        this.premiumDesignDesc = premiumDesignDesc;
+    }
+
+    /**
+     * 获取保费计算公式id
+     *
+     * @return premium_formula_id - 保费计算公式id
+     */
+    public Integer getPremiumFormulaId() {
+        return premiumFormulaId;
+    }
+
+    /**
+     * 设置保费计算公式id
+     *
+     * @param premiumFormulaId 保费计算公式id
+     */
+    public void setPremiumFormulaId(Integer premiumFormulaId) {
+        this.premiumFormulaId = premiumFormulaId;
+    }
+
+    /**
+     * 获取保费计算公式，规则引擎将自动解析，P=B*（1+a）（1…n）+A（1…n）*（1+Y）(1..n)+C（1…n）*（1+Y）(1..n)+…
+     *
+     * @return premium_design - 保费计算公式，规则引擎将自动解析，P=B*（1+a）（1…n）+A（1…n）*（1+Y）(1..n)+C（1…n）*（1+Y）(1..n)+…
+     */
+    public String getPremiumDesign() {
+        return premiumDesign;
+    }
+
+    /**
+     * 设置保费计算公式，规则引擎将自动解析，P=B*（1+a）（1…n）+A（1…n）*（1+Y）(1..n)+C（1…n）*（1+Y）(1..n)+…
+     *
+     * @param premiumDesign 保费计算公式，规则引擎将自动解析，P=B*（1+a）（1…n）+A（1…n）*（1+Y）(1..n)+C（1…n）*（1+Y）(1..n)+…
+     */
+    public void setPremiumDesign(String premiumDesign) {
+        this.premiumDesign = premiumDesign;
+    }
+
+    /**
+     * 获取状态,0-失效，1-生效
+     *
+     * @return status - 状态,0-失效，1-生效
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * 设置状态,0-失效，1-生效
+     *
+     * @param status 状态,0-失效，1-生效
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * 获取生效时间
+     *
+     * @return valid_time - 生效时间
+     */
+    public Date getValidTime() {
+        return validTime;
+    }
+
+    /**
+     * 设置生效时间
+     *
+     * @param validTime 生效时间
+     */
+    public void setValidTime(Date validTime) {
+        this.validTime = validTime;
+    }
+
+    /**
+     * 获取失效时间
+     *
+     * @return unvalid_time - 失效时间
+     */
+    public Date getUnvalidTime() {
+        return unvalidTime;
+    }
+
+    /**
+     * 设置失效时间
+     *
+     * @param unvalidTime 失效时间
+     */
+    public void setUnvalidTime(Date unvalidTime) {
+        this.unvalidTime = unvalidTime;
+    }
+
+    /**
+     * 获取修改时间
+     *
+     * @return modify_time - 修改时间
+     */
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    /**
+     * 设置修改时间
+     *
+     * @param modifyTime 修改时间
+     */
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    /**
+     * 获取创建时间
+     *
+     * @return create_time - 创建时间
+     */
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * 设置创建时间
+     *
+     * @param createTime 创建时间
+     */
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    /**
+     * 获取创建人
+     *
+     * @return create_user - 创建人
+     */
+    public String getCreateUser() {
+        return createUser;
+    }
+
+    /**
+     * 设置创建人
+     *
+     * @param createUser 创建人
+     */
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
+}

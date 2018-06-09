@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.LiabilityLimitMapper">
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.LiabilityLimit">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="liability_limit_id" jdbcType="VARCHAR" property="liabilityLimitId" />
+    <result column="liability_limit_name" jdbcType="VARCHAR" property="liabilityLimitName" />
+    <result column="liability_limit_desc" jdbcType="VARCHAR" property="liabilityLimitDesc" />
+    <result column="insurance_liability_id" jdbcType="VARCHAR" property="insuranceLiabilityId" />
+    <result column="insurance_liability_name" jdbcType="VARCHAR" property="insuranceLiabilityName" />
+    <result column="limit_begin_date" jdbcType="TIMESTAMP" property="limitBeginDate" />
+    <result column="limit_end_date" jdbcType="TIMESTAMP" property="limitEndDate" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  
+  <select id="selectByInsuranceLiabilityID" resultMap="BaseResultMap" parameterType="string">
+  select * from t_liability_limit ll where ll.insurance_liability_id=#{id}
+  </select>
+</mapper>

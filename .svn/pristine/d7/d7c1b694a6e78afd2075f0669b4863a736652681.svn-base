@@ -1,0 +1,54 @@
+package com.jt.plt.product.entity.calPremium;
+
+import lombok.Data;
+
+/**
+ * 描述： 浮动保费
+ * 作者： wephone 
+ * 创建日期： 2018年3月12日 下午5:25:29 
+ * 版权：江泰保险经纪股份有限公司
+ */
+@Data
+public class FloatPremium {
+
+	/**
+	 * 主险浮动保费方案id
+	 */
+	private String productProgramId;
+
+
+	/**
+	 * 限额值id
+	 */
+	private  Long liabilityLimitValuesId;
+
+	/**
+	 * 限额值
+	 * @return
+	 */
+	private Double liabilityLimitValues;
+
+	public String getProductProgramId() {
+		return productProgramId;
+	}
+
+	public void setProductProgramId(String productProgramId) {
+		this.productProgramId = productProgramId;
+	}
+
+	public Long getLiabilityLimitValuesId() {
+		return liabilityLimitValuesId;
+	}
+
+	public void setLiabilityLimitValuesId(Long liabilityLimitValuesId) {
+		this.liabilityLimitValuesId = liabilityLimitValuesId;
+	}
+
+	public Double getLiabilityLimitValues() {
+		return liabilityLimitValues;
+	}
+
+	public void setLiabilityLimitValues(Double liabilityLimitValues) {
+		this.liabilityLimitValues = liabilityLimitValues;
+	}
+}

@@ -1,0 +1,328 @@
+package com.jt.plt.product.service.api.impl;
+
+import com.jt.plt.product.dto.*;
+import com.jt.plt.product.entity.*;
+import com.jt.plt.product.enums.ProductConfigBeanEnum;
+import com.jt.plt.product.mapper.*;
+import com.jt.plt.product.service.api.ProductInfoServiceApi;
+import com.jt.plt.product.util.ReturnCode;
+import com.jt.plt.product.vo.AcceptInsuranceInfoVO;
+import com.jt.plt.product.vo.InsuranLiabilityVO;
+import com.jt.plt.product.vo.InsuranLimitVO;
+import com.jt.plt.product.vo.LimitValuesVO;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+@Service
+public class ProductInfoServiceApiImpl implements ProductInfoServiceApi {
+	private final Logger log = LoggerFactory.getLogger(ProductInfoServiceApiImpl.class);
+	@Autowired 
+	private ProductInfoMapper productInfoMapper;
+	@Autowired
+	private InsuranceProgramMapper insuranceProgramMapper;
+	@Autowired
+	private InsuranceLiabilityMapper insuranceLiabilityMapper;
+	@Autowired
+	private InsuranceCompanyRelaMapper insuranceCompanyRelaMapper;
+	@Autowired
+	private InsuranceFactorRelaMapper insuranceFactorRelaMapper;
+	@Autowired
+	private ConfCoefficientMapper confCoefficientMapper;
+	@Autowired
+	private LiabilityLimitRelaMapper liabilityLimitRelaMapper;
+	@Autowired
+	private LiabilityLimitValuesMapper liabilityLimitValuesMapper;
+	@Autowired
+	private LiabilityLimitMapper liabilityLimitMapper;
+	/**
+	 * 
+	 * @param productCode
+	 * @return
+	 * 描述：产品详情
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public ProductInfoDTO findProductInfo(String productCode) {
+		ProductInfo pi = productInfoMapper.selectByPrimaryKey(productCode);
+		//产品不存在
+		if(pi==null) {
+			log.error(ProductConfigBeanEnum.NO_DATA_PRODUCT.getMessage());
+			return null;
+		}else {
+			//产品未上架
+			if(!StringUtils.contains(pi.getProductStatus(), "6")) {
+				log.error("产品状态有误！状态应该为6-已上架，现在为"+pi.getProductStatus());
+				return null;
+			}
+			ProductInfoDTO productInfoDTO = new ProductInfoDTO();
+			productInfoDTO.setId(pi.getProductCode());
+			productInfoDTO.setName(pi.getProductName());
+			productInfoDTO.setDescription(pi.getProductDesc());
+			productInfoDTO.setOnsaleAreas(null);
+			productInfoDTO.setClauseFileName(null);
+			productInfoDTO.setClauseFileUrl(null);
+			productInfoDTO.setLogoUrl(null);
+			return productInfoDTO;
+		}
+	}
+	/**
+	 * 
+	 * @param productCode
+	 * @return
+	 * 描述：方案详情
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<ProgDTO> findProgramInfo(String productCode) {
+		ProductInfo pi = productInfoMapper.selectByPrimaryKey(productCode);
+		//产品不存在
+		if(pi==null) {
+			log.error(ProductConfigBeanEnum.NO_DATA_PRODUCT.getMessage());
+			return null;
+		}else {
+			if(!StringUtils.contains(pi.getProductStatus(), "6")) {//产品未上架
+				log.error("产品状态有误！状态应该为6-已上架，现在为"+pi.getProductStatus());
+				return null;
+			}
+			List<ProgDTO> pdList = new ArrayList<>(); 
+			ProgDTO pd =null;
+			LiabilityGroupDTO liabilityGroupDTO = null;
+			//判断保费 浮动1  固定0
+			if(pi.getProductPremiumType()==0) {
+				//固定保费
+				List<ProgDTO> pList = new ArrayList<>();
+				Example insuranceProgramExample = new Example(InsuranceProgram.class);
+				insuranceProgramExample.createCriteria().andEqualTo("productCode", productCode).andEqualTo("status", ReturnCode.STATUS_CODE_1);
+				List<InsuranceProgram> ipList = insuranceProgramMapper.selectByExample(insuranceProgramExample);
+				for (InsuranceProgram insuranceProgram : ipList) {
+					//方案
+					List<LiabilityGroupDTO> lgList = new ArrayList<>();
+					pd = new ProgDTO();
+					pd.setId(insuranceProgram.getProductProgramId());
+					pd.setMaxInsured(null);
+					pd.setMemo(insuranceProgram.getProgramDesc());
+					pd.setName(insuranceProgram.getProgramName());
+					pd.setPremium(new BigDecimal(insuranceProgram.getBasicPremium()));
+					
+					Example liabilityLimitRelaExample = new Example(LiabilityLimitRela.class);
+					liabilityLimitRelaExample.orderBy("limitValues");
+					liabilityLimitRelaExample.createCriteria().andEqualTo("productProgramId", insuranceProgram.getProductProgramId());
+					//单个方案下的限额
+					List<LiabilityLimitRela> llrList = liabilityLimitRelaMapper.selectByExample(liabilityLimitRelaExample);
+					for (LiabilityLimitRela liabilityLimitRela : llrList) {
+						//责任组合
+						liabilityGroupDTO = new LiabilityGroupDTO();
+						liabilityGroupDTO.setId(null);
+						liabilityGroupDTO.setName(null);
+						//责任
+						List<LiabilityDTO> ldList = new ArrayList<>();
+						LiabilityDTO liabilityDTO = new LiabilityDTO();
+						liabilityDTO.setId(liabilityLimitRela.getLiabilityId());
+						liabilityDTO.setName(liabilityLimitRela.getLiabilityName());
+						InsuranceLiability il = insuranceLiabilityMapper.selectByPrimaryKey(liabilityLimitRela.getLiabilityId());
+						if(il!=null) {
+							liabilityDTO.setRiskInfoId(il.getRiskId());
+						}
+						//限额
+						LimitDTO ld = new LimitDTO();
+						List<LimitDTO> limitList = new ArrayList<>();
+						ld.setId(liabilityLimitRela.getLimitId());
+						ld.setName(liabilityLimitRela.getLimitName());
+						LiabilityLimit ll = liabilityLimitMapper.selectByPrimaryKey(liabilityLimitRela.getLimitId());
+						if(ll!=null) {
+							ld.setDescription(ll.getLiabilityLimitDesc());
+						}
+						//限额值
+						List<ValueDTO> vdList = new ArrayList<ValueDTO>();
+						ValueDTO vd = new ValueDTO();
+						LiabilityLimitValues llv = liabilityLimitValuesMapper.selectByPrimaryKey(liabilityLimitRela.getLimitValuesId());
+						vd.setId(llv.getLiabilityLimitId());
+						vd.setRate(null);
+						vd.setValue(liabilityLimitRela.getLimitValues());
+						vd.setValueType(llv.getLiabilityLimitValuesType());
+						vdList.add(vd);
+						ld.setValueList(vdList);
+						limitList.add(ld);
+						liabilityDTO.setLimitList(limitList);
+						ldList.add(liabilityDTO);
+						liabilityGroupDTO.setLiabilityList(ldList);
+						lgList.add(liabilityGroupDTO);
+					}
+					pd.setLiabilityGroupList(lgList);
+					pList.add(pd);
+				}
+				return pList;
+			}else {
+				Example insuranceProgramExample = new Example(InsuranceProgram.class);
+				insuranceProgramExample.createCriteria().andEqualTo("productCode", productCode).andEqualTo("status", ReturnCode.STATUS_CODE_1);
+				List<InsuranceProgram> ipList = insuranceProgramMapper.selectByExample(insuranceProgramExample);
+				Example liabilityLimitRelaExample = null;
+				for (InsuranceProgram insuranceProgram : ipList) {//方案
+					pd = new ProgDTO();
+					pd.setId(insuranceProgram.getProductProgramId());
+					pd.setName(insuranceProgram.getProductName());
+					//TODO  描述
+					pd.setMemo(insuranceProgram.getProgramDesc());
+					if(pi.getProductPremiumType() == 0) {//固定保费 有基础保费
+						pd.setPremium(new BigDecimal(insuranceProgram.getBasicPremium()));
+					}
+					liabilityLimitRelaExample = new Example(LiabilityLimitRela.class);
+					liabilityLimitRelaExample.createCriteria().andEqualTo("productProgramId", insuranceProgram.getProductProgramId());
+					//每个方案的组成
+					
+					//责任组合 暂时没有
+					List<LiabilityGroupDTO> lgdList = new ArrayList<>();
+					liabilityGroupDTO = new LiabilityGroupDTO();
+					liabilityGroupDTO.setId(null);
+					liabilityGroupDTO.setName(null);
+					
+					//责任
+					LiabilityDTO liabilityDTO = null;
+					List<LiabilityDTO> ldList = new ArrayList<>();
+					for (InsuranLiabilityVO insuranLiabilityVO : insuranceProgramMapper.findLiability(productCode)) {
+						liabilityDTO = new LiabilityDTO();
+						liabilityDTO.setId(insuranLiabilityVO.getInsuranceLiabilityId());
+						liabilityDTO.setName(insuranLiabilityVO.getInsuranceLiabilityName());
+						InsuranceLiability il = insuranceLiabilityMapper.selectByPrimaryKey(insuranLiabilityVO.getInsuranceLiabilityId());
+						liabilityDTO.setRiskInfoId(il.getRiskId());
+						//限额
+						LimitDTO ld =null;
+						List<LimitDTO> limitList = new ArrayList<>();
+						for (InsuranLimitVO insuranLimitVO : insuranceProgramMapper.findLimit(productCode, insuranLiabilityVO.getInsuranceLiabilityId())) {
+							ld = new LimitDTO();
+							ld.setId(insuranLimitVO.getLiabilityLimitId());
+							ld.setName(insuranLimitVO.getLiabilityLimitName());
+							//限额值
+							List<ValueDTO> vdList = new ArrayList<ValueDTO>();
+							ValueDTO vd = null;
+							for (LimitValuesVO limitValuesVO : insuranceProgramMapper.findLimitValues(productCode, insuranLiabilityVO.getInsuranceLiabilityId(), insuranLimitVO.getLiabilityLimitId())) {
+								vd = new ValueDTO();
+								vd.setId(limitValuesVO.getLiabilityLimitValuesId().toString());
+								vd.setValue(limitValuesVO.getLiabilityLimitValues());
+								vd.setValueType(limitValuesVO.getLiabilityLimitValuesType());
+								if(pi.getProductPremiumType() == 1) { //浮动保费有费率
+									vd.setRate(limitValuesVO.getRate().toString());
+								}
+								vdList.add(vd);
+							}
+							ld.setValueList(vdList);
+							limitList.add(ld);
+						}
+						liabilityDTO.setLimitList(limitList);
+						ldList.add(liabilityDTO);
+					}
+					liabilityGroupDTO.setLiabilityList(ldList);
+					lgdList.add(liabilityGroupDTO);
+					pd.setLiabilityGroupList(lgdList);
+					pdList.add(pd);
+				}
+				return pdList;
+			}
+		}
+	}
+	/**
+	 * 
+	 * @param productCode
+	 * @return
+	 * 描述：承保属性信息
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<InusureCompanyDTO> findInusureCompanyInfo(String productCode) {
+		List<AcceptInsuranceInfoVO> list = insuranceCompanyRelaMapper.findAcceptInsuranceInfoVOById(productCode);
+		InusureCompanyDTO inusureCompanyDTO = null;
+		List<InusureCompanyDTO> icdList = new ArrayList<>();
+		for (AcceptInsuranceInfoVO acceptInsuranceInfoVO : list) {
+			inusureCompanyDTO = new InusureCompanyDTO();
+			inusureCompanyDTO.setId(acceptInsuranceInfoVO.getCompanyId());
+			inusureCompanyDTO.setName(acceptInsuranceInfoVO.getCompanyName());
+			switch (acceptInsuranceInfoVO.getRelaType()) {
+			case "1":
+				inusureCompanyDTO.setPartyRole("承保");
+				switch (acceptInsuranceInfoVO.getAttributeValueCode()) {
+				case "1":
+					inusureCompanyDTO.setShareType("独立承保");
+					inusureCompanyDTO.setShareScale(acceptInsuranceInfoVO.getAttributeValues());
+					break;
+				case "2":
+					inusureCompanyDTO.setShareType("主承");
+					inusureCompanyDTO.setShareScale(acceptInsuranceInfoVO.getAttributeValues());
+					break;
+				case "3":
+					inusureCompanyDTO.setShareType("共保");
+					inusureCompanyDTO.setShareScale(acceptInsuranceInfoVO.getAttributeValues());
+					break;
+				default:
+					break;
+				}
+				break;
+			case "2":
+				inusureCompanyDTO.setPartyRole("出单");
+				switch (acceptInsuranceInfoVO.getAttributeValueCode()) {
+				case "Y":
+					inusureCompanyDTO.setInsuringType("出单");
+					inusureCompanyDTO.setInsuringAreaCode(acceptInsuranceInfoVO.getAreaCode());
+					//TODO 区域名称
+					inusureCompanyDTO.setInsuringAreaName(null);
+					break;
+				case "N":
+					inusureCompanyDTO.setInsuringType("跟单");
+					break;
+				default:
+					break;
+				}
+				break;
+			case "3":
+				inusureCompanyDTO.setPartyRole("解付");
+				switch (acceptInsuranceInfoVO.getAttributeValueCode()) {
+				case "4":
+					inusureCompanyDTO.setPayType("一对一解付");
+					inusureCompanyDTO.setPayScale(acceptInsuranceInfoVO.getAttributeValues());
+					break;
+				case "5":
+					inusureCompanyDTO.setPayType("一对多解付");
+					inusureCompanyDTO.setPayScale(acceptInsuranceInfoVO.getAttributeValues());
+					break;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
+			}
+			icdList.add(inusureCompanyDTO);
+		}
+		return icdList;
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public List<Factor> findFactorInfo(String productCode) {
+		 List<Factor> fList = insuranceFactorRelaMapper.findFactorInfo(productCode);
+		 if(fList!=null&&fList.size()>0) {
+			 Example confCoefficientExample = new Example(ConfCoefficient.class);
+			 ConfCoefficient confCoefficient = null;
+			 for (Factor factor : fList) {
+				 confCoefficientExample.createCriteria().andEqualTo("status", "1").andEqualTo("factorRelaId", factor.getCode());
+				 List<ConfCoefficient> ccList = confCoefficientMapper.selectByExample(confCoefficientExample);
+				 if(ccList!=null&&ccList.size()>0) {
+					 confCoefficient = ccList.get(0);
+					 if(StringUtils.equals(confCoefficient.getOperatorType(), ReturnCode.STATUS_CODE_2)) {
+						 factor.setType(confCoefficient.getOperatorType());
+					 }
+				 }
+			}
+			 return fList;
+		 }else {
+			 //TODO 因子为空 处理
+			 return null;
+		 }
+	}
+}

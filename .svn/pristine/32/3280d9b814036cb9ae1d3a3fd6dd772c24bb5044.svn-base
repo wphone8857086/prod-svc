@@ -1,0 +1,67 @@
+package com.jt.plt.product.dto;
+
+
+import java.util.List;
+
+ /**
+  * 描述：限额数据类
+  * 类名称：LimitDTO
+  * 作者： wangyang
+  * 版本：1.0
+  * 修改：
+  * 创建日期：
+  * 版权：江泰保险经纪股份有限公司
+  */
+public class LimitDTO {
+    /**
+     * 限额ID
+     */
+    private String id;
+
+    /**
+     * 限额名称
+     */
+    private String name;
+
+	 /**
+	  * 描述
+	  */
+	 private String description;
+
+    /**
+     * 限额值列表
+     */
+    private List<ValueDTO> valueList;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public List<ValueDTO> getValueList() {
+		return valueList;
+	}
+
+	public void setValueList(List<ValueDTO> valueList) {
+		this.valueList = valueList;
+	}
+
+	 public String getDescription() {
+		 return description;
+	 }
+
+	 public void setDescription(String description) {
+		 this.description = description;
+	 }
+ }

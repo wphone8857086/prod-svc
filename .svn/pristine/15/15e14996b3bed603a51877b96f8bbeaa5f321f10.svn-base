@@ -1,0 +1,278 @@
+package com.jt.plt.product.entity;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Table(name = "t_liability_limit_rela")
+public class LiabilityLimitRela {
+    /**
+     * 序号id
+     */
+    @Id
+    @Column(name = "rela_id")
+    private Integer relaId;
+	/**
+     * 所属方案id
+     */
+    @Column(name = "product_program_id")
+    private String productProgramId;
+
+    /**
+     * 方案名称
+     */
+    @Column(name = "program_name")
+    private String programName;
+
+    /**
+     * 所属责任id
+     */
+    @Column(name = "liability_id")
+    private String liabilityId;
+
+    /**
+     * 所属责任名称
+     */
+    @Column(name = "liability_name")
+    private String liabilityName;
+
+    /**
+     * 限额id
+     */
+    @Column(name = "limit_id")
+    private String limitId;
+
+    /**
+     * 限额名称
+     */
+    @Column(name = "limit_name")
+    private String limitName;
+
+    /**
+     * 限额值id
+     */
+    @Column(name = "limit_values_id")
+    private Long limitValuesId;
+
+    /**
+     * 限额值或者限额描述
+     */
+    @Column(name = "limit_values")
+    private String limitValues;
+
+    /**
+     * 状态：0-失效,1-生效
+     */
+    private String status;
+    /**
+     * 费率（浮动基础保费时不同限额值对应的费率）
+     */
+    private Double rate;
+    /**
+    * 是否参与保费计算 （0-不参与 ，1-参与）
+    */
+    private Integer calculationType;
+    /**
+     * 是否参与保费计算 （0-不参与 ，1-参与）
+     */
+    public Integer getCalculationType() {
+		return calculationType;
+	}
+    /**
+     * 是否参与保费计算 （0-不参与 ，1-参与）
+     */
+	public void setCalculationType(Integer calculationType) {
+		this.calculationType = calculationType;
+	}
+	/**
+     * 费率（浮动基础保费时不同限额值对应的费率）
+     */
+    public Double getRate() {
+		return rate;
+	}
+    /**
+     * 费率（浮动基础保费时不同限额值对应的费率）
+     */
+	public void setRate(Double rate) {
+		this.rate = rate;
+	}
+	/**
+     * 获取序号id
+     *
+     * @return rela_id - 序号id
+     */
+    public Integer getRelaId() {
+        return relaId;
+    }
+
+    /**
+     * 设置序号id
+     *
+     * @param relaId 序号id
+     */
+    public void setRelaId(Integer relaId) {
+        this.relaId = relaId;
+    }
+
+    /**
+     * 获取所属方案id
+     *
+     * @return product_program_id - 所属方案id
+     */
+    public String getProductProgramId() {
+        return productProgramId;
+    }
+
+    /**
+     * 设置所属方案id
+     *
+     * @param productProgramId 所属方案id
+     */
+    public void setProductProgramId(String productProgramId) {
+        this.productProgramId = productProgramId;
+    }
+
+    /**
+     * 获取方案名称
+     *
+     * @return program_name - 方案名称
+     */
+    public String getProgramName() {
+        return programName;
+    }
+
+    /**
+     * 设置方案名称
+     *
+     * @param programName 方案名称
+     */
+    public void setProgramName(String programName) {
+        this.programName = programName;
+    }
+
+    /**
+     * 获取所属责任id
+     *
+     * @return liability_id - 所属责任id
+     */
+    public String getLiabilityId() {
+        return liabilityId;
+    }
+
+    /**
+     * 设置所属责任id
+     *
+     * @param liabilityId 所属责任id
+     */
+    public void setLiabilityId(String liabilityId) {
+        this.liabilityId = liabilityId;
+    }
+
+    /**
+     * 获取所属责任名称
+     *
+     * @return liability_name - 所属责任名称
+     */
+    public String getLiabilityName() {
+        return liabilityName;
+    }
+
+    /**
+     * 设置所属责任名称
+     *
+     * @param liabilityName 所属责任名称
+     */
+    public void setLiabilityName(String liabilityName) {
+        this.liabilityName = liabilityName;
+    }
+
+    /**
+     * 获取限额id
+     *
+     * @return limit_id - 限额id
+     */
+    public String getLimitId() {
+        return limitId;
+    }
+
+    /**
+     * 设置限额id
+     *
+     * @param limitId 限额id
+     */
+    public void setLimitId(String limitId) {
+        this.limitId = limitId;
+    }
+
+    /**
+     * 获取限额名称
+     *
+     * @return limit_name - 限额名称
+     */
+    public String getLimitName() {
+        return limitName;
+    }
+
+    /**
+     * 设置限额名称
+     *
+     * @param limitName 限额名称
+     */
+    public void setLimitName(String limitName) {
+        this.limitName = limitName;
+    }
+
+    /**
+     * 获取限额值id
+     *
+     * @return limit_values_id - 限额值id
+     */
+    public Long getLimitValuesId() {
+        return limitValuesId;
+    }
+
+    /**
+     * 设置限额值id
+     *
+     * @param limitValuesId 限额值id
+     */
+    public void setLimitValuesId(Long limitValuesId) {
+        this.limitValuesId = limitValuesId;
+    }
+
+    /**
+     * 获取限额值或者限额描述
+     *
+     * @return limit_values - 限额值或者限额描述
+     */
+    public String getLimitValues() {
+        return limitValues;
+    }
+
+    /**
+     * 设置限额值或者限额描述
+     *
+     * @param limitValues 限额值或者限额描述
+     */
+    public void setLimitValues(String limitValues) {
+        this.limitValues = limitValues;
+    }
+
+    /**
+     * 获取状态：0-失效,1-生效
+     *
+     * @return status - 状态：0-失效,1-生效
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * 设置状态：0-失效,1-生效
+     *
+     * @param status 状态：0-失效,1-生效
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+}
