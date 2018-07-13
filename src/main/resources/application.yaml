@@ -1,6 +1,5 @@
 server:
     port: 6021
-    context-path: /prod-svc
     undertow:
         accessLog:
             enabled: true

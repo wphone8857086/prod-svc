@@ -5,26 +5,31 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 /**
- * @Description: 保费视图
+ * @Description: 险种保费视图
  * @Auther: wephone
- * @Date: 2018/6/13 17:44
+ * @Date: 2018/6/13 14:01
  * @ModifiedDate：
  * @Copyright:江泰保险股份有限公司 
  */
 @Data
-public class Premium {
-    /**
-     * 总保费
-     */
-    private BigDecimal totalPremium;
+public class RiskPremium {
 
     /**
-     *
+     * 险种编码
+     */
+    private String riskCode;
+
+    /**
+     * 险种保费
      */
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
-    private List<OnePremium> singlePremiums;
+    private BigDecimal riskPremiuml;
 
+    /**
+     * 限额保费
+     */
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private  List<LimitPremium> limitPremiums;
 }

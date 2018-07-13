@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.ProductRiskRelMapper">
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.ProductRiskRel">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_code" jdbcType="INTEGER" property="productCode" />
+    <result column="risk_code" jdbcType="INTEGER" property="riskCode" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="risk_name" jdbcType="VARCHAR" property="riskName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="product_info_product_code" jdbcType="INTEGER" property="productInfoProductCode" />
+    <result column="risk_info_risk_id" jdbcType="INTEGER" property="riskInfoRiskId" />
+  </resultMap>
+  
+  <select id="selectByProductCode" resultMap="BaseResultMap">
+  	SELECT 
+		id,
+		product_code, 
+		risk_code,
+		product_name,
+		risk_name,
+		create_time
+	FROM 
+		product_risk_rel
+	WHERE 
+		product_code=#{productCode}
+  </select>
+  <update id="deleteByProductCode">
+  	DELETE 
+	FROM product_risk_rel
+	WHERE product_code = #{productCode}
+  </update>
+</mapper>

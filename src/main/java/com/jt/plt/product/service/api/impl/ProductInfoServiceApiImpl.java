@@ -21,11 +21,14 @@ import com.jt.plt.product.dto.program.LimitInfoBean;
 import com.jt.plt.product.dto.program.ProgramInfoBean;
 import com.jt.plt.product.dto.program.RateInfoBean;
 import com.jt.plt.product.dto.program.RiskInfoBean;
+import com.jt.plt.product.dto.program.ValueBean;
 import com.jt.plt.product.entity.ConfCoefficient;
 import com.jt.plt.product.entity.FloatRate;
 import com.jt.plt.product.entity.InsuranceLiability;
 import com.jt.plt.product.entity.InsuranceProgram;
+import com.jt.plt.product.entity.LiabilityLimit;
 import com.jt.plt.product.entity.LiabilityLimitRela;
+import com.jt.plt.product.entity.LiabilityLimitValues;
 import com.jt.plt.product.entity.ProductInfo;
 import com.jt.plt.product.enums.ProductConfigBeanEnum;
 import com.jt.plt.product.mapper.ConfCoefficientMapper;
@@ -34,7 +37,9 @@ import com.jt.plt.product.mapper.InsuranceCompanyRelaMapper;
 import com.jt.plt.product.mapper.InsuranceFactorRelaMapper;
 import com.jt.plt.product.mapper.InsuranceLiabilityMapper;
 import com.jt.plt.product.mapper.InsuranceProgramMapper;
+import com.jt.plt.product.mapper.LiabilityLimitMapper;
 import com.jt.plt.product.mapper.LiabilityLimitRelaMapper;
+import com.jt.plt.product.mapper.LiabilityLimitValuesMapper;
 import com.jt.plt.product.mapper.ProductInfoMapper;
 import com.jt.plt.product.service.api.ProductInfoServiceApi;
 import com.jt.plt.product.util.ReturnCode;
@@ -60,6 +65,10 @@ public class ProductInfoServiceApiImpl implements ProductInfoServiceApi {
 	private FloatRateMapper floatRateMapper;
 	@Autowired
 	private LiabilityLimitRelaMapper liabilityLimitRelaMapper;
+	@Autowired
+	private LiabilityLimitValuesMapper liabilityLimitValuesMapper;
+	@Autowired
+	private LiabilityLimitMapper liabilityLimitMapper;
 	/**
 	 * 
 	 * @param productCode
@@ -475,6 +484,22 @@ public class ProductInfoServiceApiImpl implements ProductInfoServiceApi {
 							limitInfoBean = new LimitInfoBean();
 							limitInfoBean.setCode(limitCode);
 							limitInfoBean.setName(limitMap.get(limitCode).getLimitName());
+							LiabilityLimit limit = liabilityLimitMapper.selectByLiabilityLimitCode(limitCode);
+							limitInfoBean.setMark(limit.getMark());
+							List<LiabilityLimitValues> valueList = liabilityLimitValuesMapper.selectByLimitCode(limitCode);
+							List<ValueBean> vlaueList = new ArrayList<>();
+							ValueBean vlaueBean = null;
+							for (LiabilityLimitValues liabilityLimitValues : valueList) {
+								vlaueBean = new ValueBean();
+								vlaueBean.setCode(liabilityLimitValues.getLiabilityLimitCode());
+								if(StringUtils.equals(liabilityLimitValues.getLiabilityLimitValuesType(), ReturnCode.STATUS_CODE_1)) {
+									vlaueBean.setValue(String.valueOf(liabilityLimitValues.getLiabilityLimitValues()));
+								}else {
+									vlaueBean.setValue(liabilityLimitValues.getLimitValuesDesc());
+								}
+								vlaueList.add(vlaueBean);
+							}
+							limitInfoBean.setValueList(vlaueList);
 							limitInfoBean.setIsFloat(ReturnCode.STATUS_CODE_1);
 							List<FloatRate> floatRateList = floatRateMapper.selectByprogramCodeAndLimitCode(insuranceProgram.getProgramCode(),limitCode);
 							RateInfoBean rateInfoBean = null;

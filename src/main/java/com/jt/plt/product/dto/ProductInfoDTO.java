@@ -78,7 +78,7 @@ public class ProductInfoDTO {
      * 方案列表
      */
     @JsonInclude(value = Include.NON_NULL)
-    private List<ProgramInfoBean> progList;
+    private List<ProgramInfoBean> progromList;
     
 
 	/**
@@ -113,15 +113,15 @@ public class ProductInfoDTO {
 	/**
 	 * @return the progList
 	 */
-	public List<ProgramInfoBean> getProgList() {
-		return progList;
+	public List<ProgramInfoBean> getProgromList() {
+		return progromList;
 	}
 
 	/**
 	 * @param progList the progList to set
 	 */
-	public void setProgList(List<ProgramInfoBean> progList) {
-		this.progList = progList;
+	public void setProgromList(List<ProgramInfoBean> progromList) {
+		this.progromList = progromList;
 	}
 
 	public String getName() {

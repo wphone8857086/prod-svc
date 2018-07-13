@@ -1,5 +1,7 @@
 package com.jt.plt.product.entity;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -10,6 +12,7 @@ import java.io.Serializable;
  * @date 2018年3月2日 上午9:50:55
  */
 @Table(name = "t_product_info")
+@Data
 public class ProductInfo implements Serializable {
 
     private static final long serialVersionUID = -1L;

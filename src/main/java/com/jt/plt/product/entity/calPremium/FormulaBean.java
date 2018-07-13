@@ -24,10 +24,6 @@ public class FormulaBean {
 	 */
 	private  List<FactorInfo> factorInfos;
 
-	/**
-	 * 赔付率因子编码
-	 */
-	private String lossFactorCode;
 
 	/**
 	 * 主险参保份数
@@ -35,14 +31,14 @@ public class FormulaBean {
 	private BigDecimal basicCount;
 
 	/**
-	 * 主险方案编码
+	 * 基本险方案编码
 	 */
     private String programCode;
 
 	/**
-	 * 主险浮动保费
+	 * 基本险浮动保费
 	 */
-	private List<FloatPremium> floatPremiums;
+	private List<RiskBean> riskBeans;
 
 	/**
 	 * 附加险集合
@@ -52,7 +48,7 @@ public class FormulaBean {
 	/**
 	 * 续保状态 0-续保 1-新保
 	 */
-	private String renenwalStatus;
+	private String renewalStatus;
 
 	/**
 	 * 保单号
@@ -76,6 +72,11 @@ public class FormulaBean {
 	 * 渠道编码
 	 */
      private String channelNo;
+
+	/**
+	 * 保单序号
+	 */
+	private Integer policyNum;
 
 
 

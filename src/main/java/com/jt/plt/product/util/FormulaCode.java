@@ -78,4 +78,13 @@ public class FormulaCode {
 
     public final static String TYPE_3 = "3";
     public final static String TYPE_4 = "4";
+
+    /**
+     * 主险标识
+     */
+    public  final static String STATUS_M = "M";
+    /**
+     * 附加险标识
+      */
+    public final static String STATUS_A ="A";
 }

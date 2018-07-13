@@ -33,7 +33,6 @@ import com.jt.plt.product.util.ReturnCode;
 
 
 @RestController
-@RequestMapping(value = "")
 public class ProdcutInfoController {
 
     @Autowired
@@ -42,6 +41,11 @@ public class ProdcutInfoController {
     @PostMapping(value="/calpremiumsvc", produces={MediaType.APPLICATION_JSON_UTF8_VALUE})
     public @ResponseBody ResultMsg calPremium(@RequestBody FormulaBean formulaBean){
         return formulaService.countPremium(formulaBean);
+    }
+
+    @PostMapping(value="/calpremiumsvcs", produces={MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public @ResponseBody ResultMsg calPremiums(@RequestBody List<FormulaBean> formulaBeans){
+        return formulaService.countPremiums(formulaBeans);
     }
 
     @PostMapping("/premium")
@@ -112,7 +116,7 @@ public class ProdcutInfoController {
         }else {
         	piDTO.setHasAttachRisk(ReturnCode.STATUS_CODE_0);
         }
-        piDTO.setProgList(productInfoServiceApi.findProgramInfo(id));
+        piDTO.setProgromList(productInfoServiceApi.findProgramInfo(id));
         List<InusureCompanyDTO> icList = productInfoServiceApi.findInusureCompanyInfo(id);
         if(icList!=null&&icList.size()>0) {
         	piDTO.setInusureCompanyList(icList);

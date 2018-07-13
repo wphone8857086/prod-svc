@@ -23,7 +23,7 @@
 		<result column="deductible_info_no" jdbcType="INTEGER"
 			property="deductibleInfoNo" />
 		<result column="special_clause_code" jdbcType="INTEGER"
-			property="specialClauseClauseCode" />
+			property="specialClauseCode" />
 	</resultMap>
 
 	<select id="selectByProductCode" resultMap="BaseResultMap">

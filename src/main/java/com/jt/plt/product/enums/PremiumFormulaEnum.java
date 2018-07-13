@@ -116,20 +116,21 @@ public enum PremiumFormulaEnum {
 	 */
 	IS_NULL_FLOATPREMIUMS(10722,"主险浮动保费集合不能为空"),
 
+
 	/**
 	 * 限额值id不能为空
 	 */
-	IS_NULL_LIABILITYLIMITVALUESID(10723,"限额值id不能为空"),
+	IS_NULL_LIABILITYLIMITVALUESID(10723,"限额值编码不能为空"),
 
 
 	/**
 	 * 限额ID不能为空
 	 */
-	IS_NULL_LIMITID(10734,"限额ID不能为空"),
+	IS_NULL_LIMITID(10734,"限额编码不能为空"),
 	/**
 	 * 限额值ID数据库不存在
 	 */
-	IS_NULL_LIMITVALUES_ID(10735,"限额值ID数据库不存在"),
+	IS_NULL_LIMITVALUES_ID(10735,"限额值编码数据库不存在"),
 	/**
 	 * 方案编码不能为空
 	 */
@@ -190,6 +191,29 @@ public enum PremiumFormulaEnum {
 	 * 因子关系id不能为空
 	 */
 	IS_NULL_FACTORRELA_ID(10747,"因子关系id不能为空"),
+
+	/**
+	 * 险种编码不能为空
+	 */
+	IS_NULL_RISKCODE(10748,"险种编码不能为空"),
+	/**
+	 * 险种组合不能为空
+	 */
+	IS_NULL_RISKBEAN(10749,"险种组合不能为空"),
+
+	/**
+	 * 主险浮动保费集合不能为空
+	 */
+	IS_NULL_ADDTITIONFLOATPREMIUMS(10750,"附加险浮动保费集合不能为空"),
+
+	/**
+	 * 基本险险种编码输入错误
+	 */
+	IS_FAILD_BASIC_RISK(10751,"基本险险种编码输入错误"),
+	/**
+	 * 基本险险种编码输入错误
+	 */
+	IS_FAILD_ADDTITON_RISK(10752,"基本险险种编码输入错误"),
 	;
 
 

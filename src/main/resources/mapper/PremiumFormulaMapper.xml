@@ -7,11 +7,13 @@
     -->
     <id column="premium_formula_id" jdbcType="INTEGER" property="premiumFormulaId" />
     <result column="premium_design" jdbcType="VARCHAR" property="premiumDesign" />
+    <result column="premium_design_desc" jdbcType="VARCHAR" property="premiumDesignDesc" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="valid_time" jdbcType="TIMESTAMP" property="validTime" />
     <result column="unvalid_time" jdbcType="TIMESTAMP" property="unvalidTime" />
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+
   </resultMap>
 </mapper>

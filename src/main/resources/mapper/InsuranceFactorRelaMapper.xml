@@ -30,7 +30,7 @@
 	AND ifr.product_code = #{productCode}
    </select>
     <select id="selectByMap" resultMap="BaseResultMap" parameterType="map">
-        select factor_rela_id,product_code,factor_code,factor_type_name,create_timefrom t_insurance_factor_rela
+        select factor_rela_id,product_code,factor_code,factor_type_name,create_time from t_insurance_factor_rela
         WHERE product_code=#{productCode} and factor_code =#{factorCode}
     </select>
 </mapper>

@@ -17,13 +17,22 @@ public class LimitInfoBean {
 	 */
 	private String name;
 	/**
+     * 标记
+     * 对应的限额值是否参与上下限浮动 ：0-不参与， 1-参与上限，2-参与下限
+     */
+	private String mark;
+	/**
 	 * 限额值编码
 	 */
 	private String valueCode;
 	/**
-	 * 限额值
+	 * 限额值(固定限额值)
 	 */
 	private String value;
+	/**
+	 * 浮动限额值集合
+	 */
+	private List<ValueBean> valueList;
 	/**
 	 * 保费（固定加浮动时存在）
 	 */
@@ -36,6 +45,32 @@ public class LimitInfoBean {
 	 * 浮动费率（浮动时存在）
 	 */
 	private List<RateInfoBean> rateList;
+	/**
+     * 标记
+     * 对应的限额值是否参与上下限浮动 ：0-不参与， 1-参与上限，2-参与下限
+     */
+	public String getMark() {
+		return mark;
+	}
+	/**
+     * 标记
+     * 对应的限额值是否参与上下限浮动 ：0-不参与， 1-参与上限，2-参与下限
+     */
+	public void setMark(String mark) {
+		this.mark = mark;
+	}
+	/**
+	 * 浮动限额值集合
+	 */
+	public List<ValueBean> getValueList() {
+		return valueList;
+	}
+	/**
+	 * 浮动限额值集合
+	 */
+	public void setValueList(List<ValueBean> valueList) {
+		this.valueList = valueList;
+	}
 	/**
 	 * @return the code
 	 * 限额编码
@@ -77,13 +112,14 @@ public class LimitInfoBean {
 	}
 	/**
 	 * @return the value
-	 * 限额值
+	 * 限额值(固定限额值)
 	 */
 	public String getValue() {
 		return value;
 	}
 	/**
-	 * @param 限额值
+	 * 限额值(固定限额值)
+	 * @param 
 	 */
 	public void setValue(String value) {
 		this.value = value;

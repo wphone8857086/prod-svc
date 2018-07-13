@@ -26,6 +26,7 @@ public interface LiabilityLimitValuesMapper extends MyMapper<LiabilityLimitValue
     int insertList(List<LiabilityLimitValues> liabilityLimitValues);
 
 	LiabilityLimitValues selectByLiabilityLimitValuesCode(String liabilityLimitValuesCode);
+	List<LiabilityLimitValues> selectByLimitCode(String limitCode);
 	/**
 	 * 
 	 * @param min
