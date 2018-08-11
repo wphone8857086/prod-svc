@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.CompanyInfoMapper">
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.CompanyInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="company_code" jdbcType="VARCHAR" property="companyCode" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="company_short" jdbcType="VARCHAR" property="companyShort" />
+    <result column="pre_company_code" jdbcType="VARCHAR" property="preCompanyCode" />
+    <result column="pre_company_name" jdbcType="VARCHAR" property="preCompanyName" />
+    <result column="company_level" jdbcType="VARCHAR" property="companyLevel" />
+    <result column="company_logo" jdbcType="VARCHAR" property="companyLogo" />
+    <result column="company_introduce_url" jdbcType="VARCHAR" property="companyIntroduceUrl" />
+    <result column="province_code" jdbcType="VARCHAR" property="provinceCode" />
+    <result column="city_code" jdbcType="VARCHAR" property="cityCode" />
+    <result column="country_code" jdbcType="VARCHAR" property="countryCode" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="province_name" jdbcType="VARCHAR" property="provinceName" />
+    <result column="city_name" jdbcType="VARCHAR" property="cityName" />
+    <result column="country_name" jdbcType="VARCHAR" property="countryName" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+  </resultMap>
+  <select id="selectAllCompany" resultType="com.jt.plt.product.dto.company.CompanyDTO">
+  	SELECT DISTINCT c.company_code code,i.company_name name
+	FROM `t_product_info` p,t_company_rela_attribute c LEFT JOIN t_company_info i
+	ON i.company_code = c.company_code
+	WHERE p.product_code = c.product_code AND c.attribute_value_code IN(1,3) AND p.product_type='01' AND i.`status` = '1'
+  </select>
+</mapper>

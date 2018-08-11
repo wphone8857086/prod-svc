@@ -7,12 +7,11 @@
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="product_code" jdbcType="INTEGER" property="productCode" />
-    <result column="risk_code" jdbcType="INTEGER" property="riskCode" />
+    <result column="risk_code" jdbcType="VARCHAR" property="riskCode" />
     <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="risk_flag" jdbcType="VARCHAR" property="riskFlag" />
     <result column="risk_name" jdbcType="VARCHAR" property="riskName" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="product_info_product_code" jdbcType="INTEGER" property="productInfoProductCode" />
-    <result column="risk_info_risk_id" jdbcType="INTEGER" property="riskInfoRiskId" />
   </resultMap>
   
   <select id="selectByProductCode" resultMap="BaseResultMap">
@@ -21,6 +20,7 @@
 		product_code, 
 		risk_code,
 		product_name,
+		risk_flag,
 		risk_name,
 		create_time
 	FROM 
@@ -33,4 +33,10 @@
 	FROM product_risk_rel
 	WHERE product_code = #{productCode}
   </update>
+  <select id="selectAddRiskByProductCode" resultType="com.jt.plt.product.dto.company.AddRisk" parameterType="string">
+  	SELECT r.risk_code,r.risk_name,r.risk_desc 
+	FROM product_risk_rel p 
+	LEFT JOIN t_risk_info r ON p.risk_code = r.risk_code AND r.risk_flag = 'A'
+	WHERE p.product_code = #{productCode}
+  </select>
 </mapper>

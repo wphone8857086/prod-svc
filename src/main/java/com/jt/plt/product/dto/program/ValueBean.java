@@ -1,18 +1,25 @@
 package com.jt.plt.product.dto.program;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 
  * @author 可达鸭
  * 描述:浮动限额值集合
  * @date 2018年6月12日 上午10:01:32
  */
+@ApiModel("浮动限额值集合")
 public class ValueBean {
 	/**
 	 * 限额值编码
 	 */
+	@ApiModelProperty("限额值编码")
 	private String code;
 	/**
 	 * 限额值
 	 */
+	@ApiModelProperty("限额值")
 	private String value;
 	/**
 	 * 限额值编码

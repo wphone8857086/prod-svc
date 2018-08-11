@@ -13,7 +13,7 @@ import java.util.List;
  * @Copyright:江泰保险股份有限公司 
  */
 @Data
-public class AdditionInsurance implements Comparable {
+public class  AdditionInsurance implements Comparable {
      /**
 	 * 附加险参保份数
 	 */

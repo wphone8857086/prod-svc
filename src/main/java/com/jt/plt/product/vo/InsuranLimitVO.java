@@ -19,16 +19,17 @@ public class InsuranLimitVO {
      */
     @JsonInclude(value = Include.NON_NULL)
     private String liabilityLimitId;
-    
+    private String liabilityLimitCode;
     /**
      * 责任限额名称
      */
     private String liabilityLimitName;
+   
     /**
      * 限额值视图
      */
     @JsonInclude(value = Include.NON_NULL)
-	private List<LimitValuesVO> limitValuesVo;
+	private List<LimitValuesVO> limitValues;
 	/**
 	 * 浮动限额值视图
 	 */
@@ -63,12 +64,22 @@ public class InsuranLimitVO {
 	public void setLiabilityLimitName(String liabilityLimitName) {
 		this.liabilityLimitName = liabilityLimitName;
 	}
-	public List<LimitValuesVO> getLimitValuesVo() {
-		return limitValuesVo;
+	public List<LimitValuesVO> getLimitValues() {
+		return limitValues;
 	}
-	public void setLimitValuesVo(List<LimitValuesVO> limitValuesVo) {
-		this.limitValuesVo = limitValuesVo;
+	public void setLimitValues(List<LimitValuesVO> limitValues) {
+		this.limitValues = limitValues;
 	}
-	
-	
+	public List<FloatRate> getFloatRateList() {
+		return floatRateList;
+	}
+	public void setFloatRateList(List<FloatRate> floatRateList) {
+		this.floatRateList = floatRateList;
+	}
+	public String getLiabilityLimitCode() {
+		return liabilityLimitCode;
+	}
+	public void setLiabilityLimitCode(String liabilityLimitCode) {
+		this.liabilityLimitCode = liabilityLimitCode;
+	}
 }

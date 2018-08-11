@@ -3,6 +3,7 @@ package com.jt.plt.product.mapper;
 import java.util.List;
 import java.util.Map;
 
+import com.jt.plt.product.entity.RiskInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -42,4 +43,5 @@ public interface InsuranceLiabilityMapper extends MyMapper<InsuranceLiability> {
 	List<InsuranceLiability> selectAllInfoByID(String id);
 
 	InsuranceLiability selectByInsuranceLiabilityCode(String liabilityCode);
+
 }

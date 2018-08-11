@@ -15,7 +15,7 @@ import com.jt.plt.product.vo.LimitValuesVO;
 
 @Repository
 public interface InsuranceProgramMapper extends MyMapper<InsuranceProgram> {
-	List<InsuranLiabilityVO> findLiability(String productCode);
+	/*List<InsuranLiabilityVO> findLiability(String productCode);
 	List<InsuranLimitVO> findLimit(@Param("productCode")String productId,@Param("liabilityId")String liabilityId);
 	List<LimitValuesVO> findLimitValues(@Param("productCode")String productId,@Param("liabilityId")String liabilityId,
 			@Param("limitId")String liabilityLimitId);
@@ -35,7 +35,7 @@ public interface InsuranceProgramMapper extends MyMapper<InsuranceProgram> {
 	List<InsuranLiabilityVO> findFixLiability(String productProgramId);
 	List<InsuranLimitVO> findFixLimit(@Param("productProgramId")String productProgramId,@Param("liabilityId")String liabilityId);
 	List<LimitValuesVO> findFixLimitValues(@Param("productProgramId")String productProgramId,@Param("liabilityId")String liabilityId,
-			@Param("limitId")String liabilityLimitId);
+			@Param("limitId")String liabilityLimitId);*/
 
     InsuranceProgram selectByProgramCode(String ProgramCode);
     List<InsuranceProgram> selectByProductCode(String productCode);

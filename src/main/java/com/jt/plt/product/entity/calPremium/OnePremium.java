@@ -16,7 +16,13 @@ import java.util.Set;
 @Data
 public class OnePremium {
 
-     /**
+
+    /**
+     * 产品编码
+     */
+    private String productCode;
+
+    /**
      * 总保费
      */
     private BigDecimal singlePremium;
@@ -35,5 +41,6 @@ public class OnePremium {
     /**
 	 * 保单序号
 	 */
+     @JsonInclude(value = JsonInclude.Include.NON_NULL)
 	private Integer policyNum;
 }

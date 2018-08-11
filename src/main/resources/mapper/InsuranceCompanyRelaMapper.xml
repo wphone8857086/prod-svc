@@ -7,7 +7,7 @@
     -->
     <id column="rela_id" jdbcType="INTEGER" property="relaId" />
     <result column="product_code" jdbcType="VARCHAR" property="productCode" />
-    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="company_code" jdbcType="VARCHAR" property="companyCode" />
     <result column="company_name" jdbcType="VARCHAR" property="companyName" />
     <result column="rela_type" jdbcType="VARCHAR" property="relaType" />
     <result column="status" jdbcType="VARCHAR" property="status" />
@@ -18,7 +18,7 @@
   	<id column="rela_id" jdbcType="INTEGER" property="relaId" />
   	<id column="attribute_value_id" jdbcType="INTEGER" property="attributeValueId" />
     <result column="product_code" jdbcType="VARCHAR" property="productCode" />
-    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="company_code" jdbcType="VARCHAR" property="companyCode" />
     <result column="company_name" jdbcType="VARCHAR" property="companyName" />
     <result column="rela_type" jdbcType="VARCHAR" property="relaType" />
     <result column="attribute_value_code" jdbcType="VARCHAR" property="attributeValueCode" />
@@ -27,12 +27,29 @@
   </resultMap> 
   
   <select id="findAcceptInsuranceInfoVOById" resultMap="VO">
-  	SELECT icr.rela_id,cra.attribute_value_id,icr.product_code,icr.rela_type,cra.attribute_value_code,cra.attribute_value_name,icr.company_id,icr.company_name,cra.attribute_values
+  	SELECT icr.rela_id,cra.attribute_value_id,icr.product_code,icr.rela_type,cra.attribute_value_code,cra.attribute_value_name,icr.company_code,icr.company_name,cra.attribute_values
 	FROM t_company_rela_attribute cra , t_insurance_company_rela icr
 	WHERE cra.rela_id = icr.rela_id 
-	AND icr.product_code = cra.product_code 
+	AND icr.product_code = cra.product_code
 	AND icr.status = '1' AND cra.status='1'
 	AND icr.product_code = #{productCode}
 	ORDER BY icr.rela_type
+  </select>
+  <select id="selectRiskByCompanyCode" resultType="com.jt.plt.product.dto.company.RiskDTO" parameterType="string">
+  	SELECT DISTINCT r.risk_code code,p.product_code productCode,r.risk_name name,r.risk_desc riskDesc
+	FROM t_insurance_company_rela i
+	LEFT JOIN product_risk_rel p ON i.product_code = p.product_code  AND i.company_code= #{companyCode}
+	LEFT JOIN t_risk_info r ON  p.risk_code = r.risk_code
+	AND r.risk_flag = 'M' 
+  </select>
+  <select id="selectByProductCode" resultType="com.jt.plt.product.dto.company.CompanyDTO" parameterType="string">
+  	SELECT i.company_code code,i.company_name name
+  	FROM t_insurance_company_rela i,t_company_rela_attribute c
+  	WHERE c.attribute_value_code IN('1','3') AND i.product_code IN (
+  	<foreach collection="list" separator="," item="productCode">
+  		#{productCode}
+  	</foreach>
+  	)
+  	GROUP BY i.company_code
   </select>
 </mapper>

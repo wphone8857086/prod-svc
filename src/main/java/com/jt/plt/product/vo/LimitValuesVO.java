@@ -15,15 +15,20 @@ public class LimitValuesVO {
      */
 	@JsonInclude(value =Include.NON_NULL)
     private Long liabilityLimitValuesId;
+	private String liabilityLimitValuesCode;
 
     /**
      * 限额值类型:1-数值,2-文字描述，3-自定义
      */
     @JsonInclude(value =Include.NON_NULL)
     private String liabilityLimitValuesType;
+    
+    @JsonInclude(value=Include.NON_NULL)
+    private String liabilityLimitValuesDesc;
     /**
      * 限额值
      */
+    @JsonInclude(value=Include.NON_NULL)
     private String liabilityLimitValues;
     /**
      * 费率
@@ -54,7 +59,18 @@ public class LimitValuesVO {
 	public void setRate(Double rate) {
 		this.rate = rate;
 	}
-
+	public String getLiabilityLimitValuesCode() {
+		return liabilityLimitValuesCode;
+	}
+	public void setLiabilityLimitValuesCode(String liabilityLimitValuesCode) {
+		this.liabilityLimitValuesCode = liabilityLimitValuesCode;
+	}
+	public String getLiabilityLimitValuesDesc() {
+		return liabilityLimitValuesDesc;
+	}
+	public void setLiabilityLimitValuesDesc(String liabilityLimitValuesDesc) {
+		this.liabilityLimitValuesDesc = liabilityLimitValuesDesc;
+	}
 	@Override
 	public String toString() {
 		return "LiabilityLimitValuesVO [liabilityLimitValuesId=" + liabilityLimitValuesId

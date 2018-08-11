@@ -16,9 +16,9 @@ import tk.mybatis.spring.annotation.MapperScan;
 @SpringBootApplication
 @MapperScan(basePackages = "com.jt.plt.product.mapper")
 public class ProductService4Application {
-    public static void main(String[] args) {
-        SpringApplication.run(ProductService4Application.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(ProductService4Application.class, args);
+	}
     @Bean
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();

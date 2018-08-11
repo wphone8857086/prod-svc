@@ -30,8 +30,8 @@ public class InsuranceCompanyRela implements Serializable {
     /**
      * 保险公司id
      */
-    @Column(name = "company_id")
-    private String companyId;
+    @Column(name = "company_code")
+    private String companyCode;
 
     /**
      * 保险公司名称
@@ -92,25 +92,15 @@ public class InsuranceCompanyRela implements Serializable {
         this.productCode = productCode;
     }
 
-    /**
-     * 获取保险公司id
-     *
-     * @return company_id - 保险公司id
-     */
-    public String getCompanyId() {
-        return companyId;
-    }
+    public String getCompanyCode() {
+		return companyCode;
+	}
 
-    /**
-     * 设置保险公司id
-     *
-     * @param companyId 保险公司id
-     */
-    public void setCompanyId(String companyId) {
-        this.companyId = companyId;
-    }
+	public void setCompanyCode(String companyCode) {
+		this.companyCode = companyCode;
+	}
 
-    /**
+	/**
      * 获取保险公司名称
      *
      * @return company_name - 保险公司名称

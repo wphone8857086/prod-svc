@@ -2,6 +2,8 @@ package com.jt.plt.product.util;
 
 import com.jt.plt.product.enums.ResultEnum;
 
+import io.swagger.annotations.ApiModel;
+@ApiModel(subTypes=ResultMsg.class,value="响应数据")
 public class ResultVO<T> extends ResultMsg{
 
     /** 具体内容. */

@@ -1,49 +1,62 @@
 package com.jt.plt.product.dto.program;
 
 import java.util.List;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 /**
  * 
  * @author 可达鸭
  * 描述:限额实体
  * @date 2018年5月29日 上午11:27:12
  */
+@ApiModel("限额")
 public class LimitInfoBean {
 	/**
 	 * 限额编码
 	 */
+	@ApiModelProperty("限额编码")
 	private String code;
 	/**
 	 * 限额名称
 	 */
+	@ApiModelProperty("限额名称")
 	private String name;
 	/**
      * 标记
      * 对应的限额值是否参与上下限浮动 ：0-不参与， 1-参与上限，2-参与下限
      */
+	@ApiModelProperty("对应的限额值是否参与上下限浮动 ：0-不参与， 1-参与上限，2-参与下限")
 	private String mark;
 	/**
 	 * 限额值编码
 	 */
+	@ApiModelProperty("限额值编码")
 	private String valueCode;
 	/**
 	 * 限额值(固定限额值)
 	 */
+	@ApiModelProperty("限额值(固定限额值)")
 	private String value;
 	/**
 	 * 浮动限额值集合
 	 */
+	@ApiModelProperty("浮动限额值集合")
 	private List<ValueBean> valueList;
 	/**
 	 * 保费（固定加浮动时存在）
 	 */
+	@ApiModelProperty("保费（固定加浮动时存在）")
 	private Double premium;
 	/**
 	 * 是否浮动 0-不浮动 1-浮动
 	 */
+	@ApiModelProperty("是否浮动 0-不浮动 1-浮动")
 	private String isFloat;
 	/**
 	 * 浮动费率（浮动时存在）
 	 */
+	@ApiModelProperty("浮动费率（浮动时存在）")
 	private List<RateInfoBean> rateList;
 	/**
      * 标记

@@ -10,7 +10,7 @@ public class LiabilityGroupBean {
 	/**
 	 * 责任分组名称
 	 */
-	private String name;
+	private String name;	
 	/**
 	 * 责任分组编码
 	 */

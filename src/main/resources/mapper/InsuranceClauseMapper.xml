@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.InsuranceClauseMapper">
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.InsuranceClause">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="insurance_clause_name" jdbcType="VARCHAR" property="insuranceClauseName" />
+    <result column="insurance_clause_url" jdbcType="VARCHAR" property="insuranceClauseUrl" />
+    <result column="their_type" jdbcType="VARCHAR" property="theirType" />
+    <result column="their_id" jdbcType="VARCHAR" property="theirId" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  
+  <select id="selectByTheirId" resultMap="BaseResultMap" parameterType="string">
+  	SELECT *
+  	FROM t_insurance_clause
+  	WHERE their_id = #{riskCode}
+  </select>
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.ProductRuleRelMapper">
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.ProductRuleRel">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="rule_id" jdbcType="BIGINT" property="ruleId" />
+    <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+    <result column="rule_type" jdbcType="VARCHAR" property="ruleType" />
+    <result column="type_code" jdbcType="VARCHAR" property="typeCode" />
+    <result column="rule_sort" jdbcType="VARCHAR" property="ruleSort" />
+    <result column="rule_values_param" jdbcType="VARCHAR" property="ruleValuesParam" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="rule_conf_values_id" jdbcType="BIGINT" property="ruleConfValuesId" />
+    <result column="is_link_rule" jdbcType="VARCHAR" property="isLinkRule" />
+    <result column="link_rule_id" jdbcType="BIGINT" property="linkRuleId" />
+    <result column="rule_info" jdbcType="VARCHAR" property="ruleInfo" />
+    <result column="rule_value" jdbcType="VARCHAR" property="ruleValue" />
+  </resultMap>
+    <select id="selectByProductCode" resultMap="BaseResultMap">
+      SELECT
+        id,
+        product_code,
+        type_code,
+        rule_id,
+        rule_name,
+        rule_type,
+        rule_sort,
+        rule_values_param,
+        status,
+        rule_conf_values_id,
+        is_link_rule,
+        link_rule_id,
+        rule_info,
+        rule_value
+        FROM
+            t_product_rule_rel
+        WHERE
+        product_code = #{productCode}
+  </select>
+    <select id="selectByRuleValue" resultMap="BaseResultMap">
+  	SELECT *
+	FROM
+		t_product_rule_rel
+	WHERE
+		rule_value = #{ruleValue}
+  </select>
+    <select id="selectByTypeCodeAndRuleValue" resultMap="BaseResultMap">
+         SELECT
+        id,
+        product_code,
+        type_code,
+        rule_id,
+        rule_name,
+        rule_type,
+        rule_sort,
+        rule_values_param,
+        status,
+        rule_conf_values_id,
+        is_link_rule,
+        link_rule_id,
+        rule_info,
+        rule_value
+        FROM
+            t_product_rule_rel
+            where rule_value = #{ruleValue} and type_code = #{typeCode}
+    </select>
+</mapper>

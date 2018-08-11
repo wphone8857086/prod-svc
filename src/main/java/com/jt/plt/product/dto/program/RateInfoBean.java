@@ -1,21 +1,29 @@
 package com.jt.plt.product.dto.program;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel("浮动费率")
 public class RateInfoBean {
 	/**
 	 * 下限限额值
 	 */
+	@ApiModelProperty("下限限额值")
 	private Double min;
 	/**
 	 * 上限限额值
 	 */
+	@ApiModelProperty("上限限额值")
 	private Double max;
 	/**
 	 * 运算符标识 1.() 2.[) 3.(] 4.[]
 	 */
+	@ApiModelProperty("运算符标识 1:() 2:[) 3:(] 4:[]")
 	private String signCode;
 	/**
 	 * 费率
 	 */
+	@ApiModelProperty("费率")
 	private Double rate;
 	/**
 	 * @return the min

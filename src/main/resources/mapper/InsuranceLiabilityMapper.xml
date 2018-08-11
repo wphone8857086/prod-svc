@@ -11,6 +11,8 @@
                 property="insuranceLiabilityType"/>
         <result column="insurance_liability_desc" jdbcType="VARCHAR"
                 property="insuranceLiabilityDesc"/>
+        <result column="label_id" jdbcType="INTEGER" property="labelId"/>
+        <result column="liability_label" jdbcType="VARCHAR" property="liabilityLabel"/>
         <result column="risk_code" jdbcType="VARCHAR" property="riskCode"/>
         <result column="risk_name" jdbcType="VARCHAR" property="riskName"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -24,6 +26,8 @@
         insurance_liability_name,
         insurance_liability_type,
         insurance_liability_desc,
+        label_id,
+        liability_label,
         risk_code,
         risk_name,
         create_time,

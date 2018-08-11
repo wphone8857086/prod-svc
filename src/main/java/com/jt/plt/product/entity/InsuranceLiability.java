@@ -42,6 +42,18 @@ public class InsuranceLiability implements Serializable {
 	     */
 	    @Column(name = "insurance_liability_desc")
 	    private String insuranceLiabilityDesc;
+	    /**
+	     * 责任描述
+	     */
+	    @Column(name = "liability_label")
+	    private String liabilityLabel;
+	    /**
+	     * 责任描述
+	     */
+	    @Column(name = "label_id")
+	    private Integer labelId;
+	    
+	    
 
 	    /**
 	     * 所属险种编码
@@ -80,8 +92,23 @@ public class InsuranceLiability implements Serializable {
 	    public void setId(Long id) {
 	        this.id = id;
 	    }
+	    public String getLiabilityLabel() {
+			return liabilityLabel;
+		}
 
-	    /**
+		public void setLiabilityLabel(String liabilityLabel) {
+			this.liabilityLabel = liabilityLabel;
+		}
+
+		public Integer getLabelId() {
+			return labelId;
+		}
+
+		public void setLabelId(Integer labelId) {
+			this.labelId = labelId;
+		}
+
+		/**
 	     * 获取责任编码
 	     *
 	     * @return insurance_liability_code - 责任编码

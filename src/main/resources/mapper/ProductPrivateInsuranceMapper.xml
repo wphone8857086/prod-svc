@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jt.plt.product.mapper.ProductPrivateInsuranceMapper" >
+	<resultMap id="BaseResultMap" type="com.jt.plt.product.entity.ProductPrivateInsurance">
+	    <!--
+	      WARNING - @mbg.generated
+	    -->
+	    <id column="id" jdbcType="BIGINT" property="id" />
+	    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+	    <result column="risk_code" jdbcType="VARCHAR" property="riskCode" />
+	    <result column="risk_name" jdbcType="VARCHAR" property="riskName" />
+	    <result column="is_must" jdbcType="VARCHAR" property="isMust" />
+	    <result column="risk_flag" jdbcType="VARCHAR" property="riskFlag" />
+	    <result column="issue_age" jdbcType="VARCHAR" property="issueAge" />
+	    <result column="period_grace" jdbcType="VARCHAR" property="periodGrace" />
+	    <result column="probation" jdbcType="VARCHAR" property="probation" />
+	    <result column="waiting_period" jdbcType="VARCHAR" property="waitingPeriod" />
+	    <result column="pay_type" jdbcType="VARCHAR" property="payType" />
+	    <result column="hesitation_period" jdbcType="VARCHAR" property="hesitationPeriod" />
+	    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	    <result column="create_id" jdbcType="VARCHAR" property="createId" />
+	    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+   </resultMap>
+   
+   <select id="selectByProductCode" parameterType="string" resultMap="BaseResultMap">
+   	SELECT 
+	   	product_code,
+	   	risk_code,
+	   	risk_name,
+	   	risk_flag,
+	   	is_must,
+	   	issue_age,
+	   	period_grace,
+	   	probation,
+	   	waiting_period,
+	   	pay_type,
+	   	hesitation_period,
+	   	create_time,
+	   	create_id,
+	   	modify_time
+   	FROM 
+   		t_product_private_insurance
+   	WHERE 
+   		product_code=#{productCode}
+   </select>
+   <select id="selectByProductCodeAndRiskCode" parameterType="string" resultMap="BaseResultMap">
+   	SELECT 
+	   	product_code,
+	   	risk_code,
+	   	risk_name,
+	   	risk_flag,
+	   	is_must,
+	   	issue_age,
+	   	period_grace,
+	   	probation,
+	   	waiting_period,
+	   	pay_type,
+	   	hesitation_period,
+	   	create_time,
+	   	create_id,
+	   	modify_time
+   	FROM 
+   		t_product_private_insurance
+   	WHERE 
+   		product_code=#{productCode}
+   		AND risk_code = #{riskCode}
+   </select>
+   <select id="selectRiskCodeByProductCode" parameterType="string" resultType="string">
+   	SELECT 
+	   	risk_code
+   	FROM 
+   		t_product_private_insurance
+   	WHERE 
+   		product_code=#{productCode}
+   		GROUP BY risk_code
+   </select>
+</mapper>

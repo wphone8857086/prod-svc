@@ -96,23 +96,14 @@ public class ReturnCode {
 	 * redis存储作为Key的前缀
 	 */
 	public final static String REDIS_PRE = "redisPre";
-	/**
-	 * 责任名称限制长度 200
-	 */
-	public final static int INSURANCE_LIABILITY_NAME_LENGTH = 200;
 
 	/**
-	 * 责任描述限制长度 500
+	 * 方案名称前缀
 	 */
-	public final static int INSURANCE_LIABILITY_DESC_LENGTH = 500;
+	public final static String PRO_SUFFIX = "FA";
 
 	/**
-	 * 限额名称限制长度 50
+	 * 方案名称前缀
 	 */
-	public final static int LIABILITY_LIMIT_NAME_LENGTH =50;
-
-	/**
-	 * 调整系数为0参数值
-	 */
-	public final static Double COEF = 5972.0;
+	public final static String insurance_SUFFIX = "FA";
 }

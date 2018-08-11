@@ -19,11 +19,6 @@ public interface LiabilityLimitValuesMapper extends MyMapper<LiabilityLimitValue
     @InsertProvider(type = SpecialProvider.class, method = "dynamicSQL")
 	@Override
     int insert(LiabilityLimitValues liabilityLimitValues);
-	
-	@Options(useGeneratedKeys = true, keyProperty = "liabilityLimitValuesId")
-    @InsertProvider(type = SpecialProvider.class, method = "dynamicSQL")
-	@Override
-    int insertList(List<LiabilityLimitValues> liabilityLimitValues);
 
 	LiabilityLimitValues selectByLiabilityLimitValuesCode(String liabilityLimitValuesCode);
 	List<LiabilityLimitValues> selectByLimitCode(String limitCode);

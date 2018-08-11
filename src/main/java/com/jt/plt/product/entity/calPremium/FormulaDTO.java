@@ -1,14 +1,14 @@
 package com.jt.plt.product.entity.calPremium;
 /**   
- * 描述：保费计算公式接收值定义对象
+ * 描述：寿险保费计算公式接收值定义对象
  * 作者： wephone   
- * 创建日期： 2018年3月8日 下午1:54:58
+ * 创建日期： 2018年7月18日 上午11:31:58
  * 版权：江泰保险经纪股份有限公司
  */
 
 
 import lombok.Data;
-import java.math.BigDecimal;
+
 import java.util.List;
 @Data
 public class FormulaDTO {
@@ -19,57 +19,23 @@ public class FormulaDTO {
 	 */
 	private String productCode;
 
+
+	/**
+	 * 寿险集合对象
+	 */
+	private List<LifeInsuranceVO> lifeInsuranceVOS;
+
 	/**
 	 * 保费计算因子
 	 */
 	private  List<FactorInfo> factorInfos;
 
-	/**
-	 * 主险参保份数
-	 */
-	private BigDecimal basicCount;
 
 	/**
-	 * 基本险方案编码
+	 * 保单序号
 	 */
-    private String programCode;
+	private Integer policyNum;
 
-	/**
-	 * 主险浮动保费
-	 */
-	private List<RiskBean> riskBeans;
 
-	/**
-	 * 附加险集合
-	 */
-	private List<AdditionInsurance> additionInsurances;
-
-	/**
-	 * 续保状态 0-续保 1-新保
-	 */
-	private String renenwalStatus;
-
-	/**
-	 * 保单号
-	 */
-	private String policyNo;
-
-   /**续保情况：0-首年投保；1-续保1年；2-续保2年；3-续保3年；依此类推 --*/
-	private Integer renewal;
-
-	/**
-	 * 上年度保险费
-	 */
-	 private BigDecimal lastPremium;
-
-	/**
-	 * 出单公司编号
-	 */
-	private String inscomp;
-
-	/**
-	 * 渠道编码
-	 */
-     private String channelNo;
 
 }

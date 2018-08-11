@@ -13,7 +13,6 @@
     <result column="product_name" jdbcType="VARCHAR" property="productName" />
     <result column="basic_premium_type" jdbcType="VARCHAR" property="basicPremiumType" />
     <result column="basic_premium" jdbcType="DOUBLE" property="basicPremium" />
-    <result column="risk_flag" jdbcType="VARCHAR" property="riskFlag" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="valid_time" jdbcType="TIMESTAMP" property="validTime" />
     <result column="unvalid_time" jdbcType="TIMESTAMP" property="unvalidTime" />
@@ -43,7 +42,7 @@
 	     <result column="rate" jdbcType="DOUBLE" property="rate" />
   </resultMap>
 
-  <select id="findLiability" resultMap="liabilityVO">
+ <!--  <select id="findLiability" resultMap="liabilityVO">
   	SELECT lr.liability_id,lr.liability_name
 	FROM t_liability_limit_rela lr,t_insurance_program ip
 	WHERE lr.product_program_id = ip.product_program_id
@@ -74,7 +73,7 @@
 	AND ip.`status` = '1'
   </select>
   
-  <!-- 固定保费 -->
+  固定保费
    <select id="findFixLiability" resultMap="liabilityVO">
   	SELECT lr.liability_id,lr.liability_name
 	FROM t_liability_limit_rela lr
@@ -98,7 +97,7 @@
 	AND lr.limit_id= #{limitId}
 	AND lr.`status` = '1'
 	GROUP BY lr.liability_id
-  </select>
+  </select> -->
 	<select id="selectByProductCode" resultMap="BaseResultMap">
   	SELECT 
 	id,
@@ -109,7 +108,6 @@
 	product_name,
 	basic_premium_type,
 	basic_premium,
-	risk_flag,
 	status,
 	valid_time,
 	unvalid_time,
@@ -137,7 +135,6 @@
 	product_name,
 	basic_premium_type,
 	basic_premium,
-	risk_flag,
 	status,
 	valid_time,
 	unvalid_time,

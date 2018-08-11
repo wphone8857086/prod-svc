@@ -3,6 +3,8 @@ package com.jt.plt.product.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
   * 描述：保险公司数据类
   * 类名称：InusureCompanyDTO
@@ -14,65 +16,77 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
   */
 public class InusureCompanyDTO {
     /**
-     * 承保公司ID
+     * 承保公司编码
      */
-    private Integer id;
+	@ApiModelProperty("承保公司编码")
+    private String code;
 
     /**
      * 承保公司名称
      */
+	@ApiModelProperty("承保公司名称")
     @JsonInclude(value = Include.NON_NULL)
     private String name;
 
     /**
      * 承保公司Logo地址
      */
+	@ApiModelProperty("承保公司Logo地址")
 	@JsonInclude(value = Include.NON_NULL)
     private String logoUrl;
 
     /**
      * 承保类型
      */
+	@ApiModelProperty("承保类型")
 	@JsonInclude(value = Include.NON_NULL)
     private String partyRole;
     /**
      * 承保类型 主承，共保，独立承保，
      */
+	@ApiModelProperty("承保类型 主承，共保，独立承保")
 	@JsonInclude(value = Include.NON_NULL)
     private String shareType;
     /**
      * 承保比例
      */
+	@ApiModelProperty("承保比例")
 	@JsonInclude(value = Include.NON_NULL)
     private String shareScale;
     /**
      * 解付类型 一对一解付 一对多解付
      */
+	@ApiModelProperty("解付类型 一对一解付 一对多解付")
 	@JsonInclude(value = Include.NON_NULL)
     private String payType;
     /**
      * 解付比例
      */
+	@ApiModelProperty("解付比例")
 	@JsonInclude(value = Include.NON_NULL)
     private String payScale;
     /**
      * 出单类型
      */
+	@ApiModelProperty("出单类型")
 	@JsonInclude(value = Include.NON_NULL)
     private String insuringType;
     /**
      * 出单区域编码
      */
+	@ApiModelProperty("出单区域编码")
 	@JsonInclude(value = Include.NON_NULL)
     private String insuringAreaCode;
     /**
      * 出单区域名称
      */
+	@ApiModelProperty("出单区域名称")
 	@JsonInclude(value = Include.NON_NULL)
     private String insuringAreaName;
     /**
      * 计算比例
      */
+	@ApiModelProperty("计算比例")
 	@JsonInclude(value = Include.NON_NULL)
     private String balanceScale;
     
@@ -179,12 +193,11 @@ public class InusureCompanyDTO {
 	public void setShareType(String shareType) {
 		this.shareType = shareType;
 	}
-
-	public Integer getId() {
-		return id;
+	public String getCode() {
+		return code;
 	}
-	public void setId(Integer id) {
-		this.id = id;
+	public void setCode(String code) {
+		this.code = code;
 	}
 	public String getName() {
 		return name;

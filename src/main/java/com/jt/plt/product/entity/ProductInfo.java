@@ -1,9 +1,12 @@
 package com.jt.plt.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 
@@ -46,7 +49,6 @@ public class ProductInfo implements Serializable {
      */
     @Column(name = "product_risk_class_id")
     private String productRiskClassId;
-
     /**
      * 保费计算类型：0-固定，1-浮动
      */
@@ -106,13 +108,55 @@ public class ProductInfo implements Serializable {
      */
     @Column(name = "special_clause_code")
     private Integer specialClauseCode;
+    /**
+     * 产品类型:“00-责任险,01-寿险类,以此类推”，非空字段。
+     */
+    @Column(name = "product_type")
+    private String productType;
+    /**
+     * 产品配置模板字段,每款产品配置完成后系统\n生成html模板页，便于产品详情回显以及产品复制
+     */
+    @Column(name = "product_template_url")
+    private String productTemplateUrl;
+    /**
+     * 保险公司协议号,对接时某些保险公司需要，非必填字段
+     */
+    @Column(name = "agreement_code")
+    private String agreementCode;
+    @Column(name = "create_user")
+    private String createUser;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "create_time")
+    private Date createTime;
+    @Column(name = "is_record")
+    private String isRecord;
+    @Column(name = "is_optimal_tax")
+    private String isOptimalTax;
+    
 
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCreateUser() {
+        return createUser;
+    }
+
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
     }
 
     /**

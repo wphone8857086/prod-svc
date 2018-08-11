@@ -7,41 +7,108 @@
 		<result column="product_code" jdbcType="VARCHAR" property="productCode" />
 		<result column="product_name" jdbcType="VARCHAR" property="productName" />
 		<result column="product_desc" jdbcType="VARCHAR" property="productDesc" />
-		<result column="product_risk_class_id" jdbcType="VARCHAR"
-			property="productRiskClassId" />
-		<result column="product_premium_type" jdbcType="INTEGER"
-			property="productPremiumType" />
+		<result column="product_risk_class_id" jdbcType="VARCHAR" property="productRiskClassId" />
+		<result column="product_premium_type" jdbcType="INTEGER"  property="productPremiumType" />
 		<result column="product_premium" jdbcType="REAL" property="productPremium" />
 		<result column="product_desgin_id" jdbcType="VARCHAR" property="productDesginId" />
 		<result column="product_status" jdbcType="VARCHAR" property="productStatus" />
-		<result column="product_channel_code" jdbcType="VARCHAR"
-			property="productChannelCode" />
-		<result column="product_channel_name" jdbcType="VARCHAR"
-			property="productChannelName" />
-		<result column="premium_formula_id"
-			jdbcType="INTEGER" property="premiumFormulaId" />
-		<result column="deductible_info_no" jdbcType="INTEGER"
-			property="deductibleInfoNo" />
-		<result column="special_clause_code" jdbcType="INTEGER"
-			property="specialClauseCode" />
+		<result column="product_type" jdbcType="VARCHAR" property="productType" />
+		<result column="product_channel_code" jdbcType="VARCHAR" property="productChannelCode" />
+		<result column="product_channel_name" jdbcType="VARCHAR" property="productChannelName" />
+		<result column="premium_ formula_id" jdbcType="INTEGER" property="premiumFormulaId" />
+		<result column="deductible_info_no" jdbcType="INTEGER"  property="deductibleInfoNo" />
+		<result column="special_clause_code" jdbcType="INTEGER" property="specialClauseCode" />
+		<result column="product_type" jdbcType="VARCHAR" property="productType" />
+		<result column="agreement_code" jdbcType="VARCHAR" property="agreementCode" />
+		<result column="is_record" jdbcType="VARCHAR" property="isRecord" />
+		<result column="is_optimal_tax" jdbcType="VARCHAR" property="isOptimalTax" />
+		<result column="product_template_url" jdbcType="VARCHAR" property="productTemplateUrl" />
+		<result column="create_user" jdbcType="VARCHAR" property="createUser" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	</resultMap>
+	<resultMap id="SimpleResultMap" type="com.jt.plt.product.dto.ProductSimpleInfo">
+		<result column="product_code" jdbcType="VARCHAR" property="code" />
+		<result column="product_name" jdbcType="VARCHAR" property="name" />
+		<result column="product_status" jdbcType="VARCHAR" property="status" />
 	</resultMap>
 
 	<select id="selectByProductCode" resultMap="BaseResultMap">
     	SELECT
+    	id,
     	product_code,
     	product_name,
     	product_desc,
     	product_risk_class_id,
     	product_premium_type,
     	product_premium,
+    	product_type,
     	product_desgin_id,
     	product_status,
     	product_channel_code,
     	product_channel_name,
     	premium_formula_id,
     	deductible_info_no,
-    	special_clause_code
+    	special_clause_code,
+    	product_type,
+    	agreement_code,
+    	product_template_url,
+    	create_user,
+    	is_record,
+    	is_optimal_tax,
+    	create_time
 		FROM t_product_info
 		WHERE product_code = #{productCode};
+    </select>
+	<select id="selectSimpleInfoList" resultMap="SimpleResultMap">
+    	SELECT
+    	product_code,
+    	product_status,
+    	product_name
+		FROM t_product_info
+    </select>
+	<select id="selectProductByType" resultType="string" parameterType="string">
+    	SELECT
+    	product_code
+		FROM t_product_info
+		WHERE product_type = #{productType}
+    </select>
+	<select id="selectByChannelCode" resultType="com.jt.plt.product.dto.lifeapp.ProductSimpleInfoDTO" parameterType="string">
+    	SELECT
+    	DISTINCT p.product_code code,p.product_name name,i.company_code companyCode,i.company_name companyName
+		FROM t_product_info p,t_company_rela_attribute c,t_insurance_company_rela i
+		WHERE product_channel_code = #{channelCode}
+		AND p.product_code = c.product_code
+		AND c.attribute_value_code IN('1','3')
+		AND c.company_code = i.company_code
+    </select>
+	<select id="findProductListByCond" resultType="com.jt.plt.product.dto.channel.LifeProductDTO" parameterType="com.jt.plt.product.dto.channel.Query">
+    	SELECT DISTINCT p.product_code productCode,p.product_name productName,c.company_code companyCode,i.company_name companyName,p.product_status productStatus
+		FROM t_product_info p,t_company_rela_attribute c ,t_company_info i
+		WHERE c.product_code = p.product_code
+		AND c.attribute_value_code IN('1','3')
+		AND c.company_code = i.company_code
+		AND p.product_status IN ('6','7')
+		AND  product_channel_code = 'pvt' 
+		<if test="productCode!= null and productCode !=''">
+		AND p.product_code LIKE CONCAT('%',#{productCode},'%')
+		</if>
+		<if test="productName!= null and productName !=''">
+		AND p.product_name LIKE CONCAT('%',#{productName},'%')
+		</if>
+		<if test="companyCode!= null and companyCode != ''">
+		AND i.company_code = #{companyCode} 
+		</if>
+		<if test="productStatus != null and productStatus !=''">
+		AND p.product_status = #{productStatus}
+		</if>
+    </select>
+	<select id="findProductList" resultType="com.jt.plt.product.dto.channel.LifeProductDTO">
+    	SELECT DISTINCT p.product_code productCode,p.product_name productName,c.company_code companyCode,i.company_name companyName,p.product_status productStatus
+		FROM t_product_info p,t_company_rela_attribute c ,t_company_info i
+		WHERE c.product_code = p.product_code
+		AND c.attribute_value_code IN('1','3')
+		AND c.company_code = i.company_code
+		AND p.product_status IN ('6','7')
+		AND  product_channel_code = 'pvt'
     </select>
 </mapper>

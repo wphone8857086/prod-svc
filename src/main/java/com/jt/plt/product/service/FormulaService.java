@@ -1,11 +1,11 @@
 package com.jt.plt.product.service;
 
+import com.jt.plt.product.entity.calPremium.CountPremiumBean;
 import com.jt.plt.product.entity.calPremium.FormulaBean;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
-
 import com.jt.plt.product.entity.calPremium.FormulaDTO;
 import com.jt.plt.product.util.ResultMsg;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -20,5 +20,12 @@ public interface FormulaService {
 
 	ResultMsg countPremium(FormulaBean formulaBean);
 
-	ResultMsg countPremiums(List<FormulaBean> formulaBeans);
+	ResponseEntity<?> countPremiums(List<FormulaBean> formulaBeans);
+
+	ResponseEntity<?> newcountPremiums(List<CountPremiumBean> countPremiumBeans);
+
+	/**
+	 * 计算寿险保费
+	 */
+	ResponseEntity<?> countLifePremiums(List<FormulaDTO> formulaDTOS);
 }

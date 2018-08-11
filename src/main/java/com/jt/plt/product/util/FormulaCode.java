@@ -65,6 +65,12 @@ public class FormulaCode {
     public final static Double LOSS_FACTOR_VALUES = 0.6;
 
 
+	/**
+	 * 0000 状态码
+	 */
+	public static  final  String STATUS_0000 = "0000";
+
+
     /**
      * 续保
      */

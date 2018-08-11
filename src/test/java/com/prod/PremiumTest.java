@@ -15,9 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -227,7 +225,7 @@ public class PremiumTest {
             e.printStackTrace();
             log.error(ResultEnum.PARAM_ERROR.getMessage());
         }
-        System.out.println(formulaService.countPremiums(formulaBeans).getMsg());
+        //System.out.println(formulaService.countPremiums(formulaBeans).get;
         long endTime = System.currentTimeMillis();
         System.out.println("当前程序耗时：" + (endTime - startTime) + "ms");
 
@@ -239,12 +237,15 @@ public class PremiumTest {
 
     @Test
     public void test10() {
+        /**
+         * 参数,运算符 谨记
+         */
         Map<String, Object> map2 = new HashMap<>(16);
-        map2.put("programCode", "18FA969049");
-        map2.put("limitCode", "18XE772083");
-        map2.put("limitValues", 5000);
+        map2.put("programCode", "18FA134340");
+        map2.put("limitCode", "XEHNHY1001");
+        map2.put("limitValues", 500000);
         FloatRate floatRate = floatRateMapper.findFloatRate(map2);
-        System.out.println(floatRate.getRate());
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+floatRate.getRate());
     }
 
     @Test

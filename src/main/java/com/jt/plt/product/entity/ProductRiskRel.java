@@ -35,6 +35,8 @@ public class ProductRiskRel {
      */
     @Column(name = "risk_name")
     private String riskName;
+    @Column(name = "risk_flag")
+    private String riskFlag;
 
     /**
      * 创建时间
@@ -148,4 +150,12 @@ public class ProductRiskRel {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+	public String getRiskFlag() {
+		return riskFlag;
+	}
+
+	public void setRiskFlag(String riskFlag) {
+		this.riskFlag = riskFlag;
+	}
 }

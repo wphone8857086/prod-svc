@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jt.plt.product.mapper.ProductRuleInfoMapper" >
+<resultMap id="BaseResultMap" type="com.jt.plt.product.entity.ProductRuleInfo">
+    <!--
+	      WARNING - @mbg.generated
+	    -->
+	    <id column="id" jdbcType="BIGINT" property="id" />
+	    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+	    <result column="rule_type" jdbcType="VARCHAR" property="ruleType" />
+	    <result column="type_code" jdbcType="VARCHAR" property="typeCode" />
+	    <result column="rule_id" jdbcType="BIGINT" property="ruleId" />
+	    <result column="rule_code" jdbcType="VARCHAR" property="ruleCode" />
+	    <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+	    <result column="rule_value" jdbcType="VARCHAR" property="ruleValue" />
+	    <result column="value_unit" jdbcType="VARCHAR" property="valueUnit" />
+	    <result column="creat_user" jdbcType="VARCHAR" property="creatUser" />
+	    <result column="creat_date" jdbcType="TIMESTAMP" property="creatDate" />
+  </resultMap>
+	<select id="selectByProductCode" resultMap="BaseResultMap">
+		SELECT *
+		FROM
+			t_product_rule_info
+		WHERE
+			product_code = #{productCode}
+		ORDER BY
+		    rule_id
+	</select>
+	<select id="selectByProductCodeAndTypeCodeWithRate" resultMap="BaseResultMap">
+		SELECT *
+		FROM
+			t_product_rule_info
+		WHERE
+			product_code = #{productCode}
+			AND type_code = #{typeCode}
+			AND rule_type = '03'
+		ORDER BY
+		    rule_id
+	</select>
+	<select id="selectByProductCodeAndTypeCode" resultMap="BaseResultMap">
+		SELECT *
+		FROM
+			t_product_rule_info
+		WHERE
+			product_code = #{productCode}
+			AND type_code = #{typeCode}
+			AND rule_type != '03'
+		ORDER BY
+		    rule_id
+	</select>
+	<select id="selectTypeCodeByProductWithRate" resultType="string">
+		SELECT rule_code
+		FROM
+			t_product_rule_info
+		WHERE
+			product_code = #{productCode}
+			AND rule_type = '03'
+		GROUP BY rule_code
+	</select>
+</mapper>

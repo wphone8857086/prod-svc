@@ -32,7 +32,7 @@ public class AcceptInsuranceInfoVO {
 	/**
 	 * 承保公司ID
 	 */
-	private Integer companyId;
+	private String companyCode;
 	/**
 	 * 公司名称
 	 */
@@ -104,17 +104,11 @@ public class AcceptInsuranceInfoVO {
 	public void setAreaCode(String areaCode) {
 		this.areaCode = areaCode;
 	}
-	/**
-	 * 承保公司ID
-	 */
-	public Integer getCompanyId() {
-		return companyId;
+	public String getCompanyCode() {
+		return companyCode;
 	}
-	/**
-	 * 承保公司ID
-	 */
-	public void setCompanyId(Integer companyId) {
-		this.companyId = companyId;
+	public void setCompanyCode(String companyCode) {
+		this.companyCode = companyCode;
 	}
 	/**
 	 * 公司名称

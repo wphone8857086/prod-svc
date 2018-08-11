@@ -2,6 +2,8 @@ package com.jt.plt.product.util;
 
 import com.jt.plt.product.enums.ResultEnum;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 
  * @author 可达鸭
@@ -10,9 +12,11 @@ import com.jt.plt.product.enums.ResultEnum;
  */
 public class ResultMsg {
 	 /** 错误码. */
+	@ApiModelProperty("返回码")
     private Integer code;
 
     /** 提示信息. */
+	@ApiModelProperty("提示信息")
     private String msg;
 
 	public ResultMsg(Integer code, String msg) {

@@ -51,7 +51,7 @@ public enum PremiumFormulaEnum {
 	/**
 	 * 含有未定义的变量
 	 */
-     IS_HAS_UNDEFINED_VARIABLE(30716,"含有未定义的变量"),
+     IS_HAS_UNDEFINED_VARIABLE(30716,"含有未赋值的变量"),
 
 	/**
 	 * 保费计算公式不能为空
@@ -114,7 +114,7 @@ public enum PremiumFormulaEnum {
 	/**
 	 * 主险浮动保费集合不能为空
 	 */
-	IS_NULL_FLOATPREMIUMS(10722,"主险浮动保费集合不能为空"),
+	IS_NULL_FLOATPREMIUMS(10722,"浮动保费集合不能为空"),
 
 
 	/**

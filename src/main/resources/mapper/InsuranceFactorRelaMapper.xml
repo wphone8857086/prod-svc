@@ -17,7 +17,6 @@
    <resultMap id="Factor" type="com.jt.plt.product.dto.Factor">
     <result column="factor_rela_id" jdbcType="BIGINT" property="factorRelaId"/>
    	<result column="factor_code" jdbcType="VARCHAR" property="factorCode" />
-   	<result column="factor_rela_id" jdbcType="BIGINT" property="factorRelaId" />
  	<result column="factor_code_name" jdbcType="VARCHAR" property="factorCodeName" />
    	<result column="factor_name" jdbcType="VARCHAR" property="factorName" />
    </resultMap>

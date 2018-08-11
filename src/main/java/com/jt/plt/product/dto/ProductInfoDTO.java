@@ -1,12 +1,15 @@
 package com.jt.plt.product.dto;
 
 
-
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.jt.plt.product.dto.program.ProgramInfoBean;
+import com.jt.plt.product.dto.rule.RuleDTO;
+import com.jt.plt.product.vo.FactorVO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import java.util.List;
 
 /**
   * 描述：产品详情数据类
@@ -17,69 +20,106 @@ import com.jt.plt.product.dto.program.ProgramInfoBean;
   * 创建日期：2018-04-02
   * 版权：江泰保险经纪股份有限公司
   */
+@ApiModel("产品详情")
 public class ProductInfoDTO {
     /**
      * 产品编码
      */
+	@ApiModelProperty("产品编码")
     private String code;
 
     /**
      * 产品名称
      */
+	@ApiModelProperty("产品名称")
     private String name;
-
+	@ApiModelProperty("产品类别 00-责任险,01-寿险类,以此类推”，非空字段")
+	private String productType;
     /**
      * 产品描述
      */
+	@ApiModelProperty("产品描述")
     private String description;
     /**
      * 是否含有因子
      */
+	@ApiModelProperty("是否含有因子（0-是，1-否）")
     private String hasFactors;
     /**
      * 因子集合
      */
+	@ApiModelProperty("因子集合(hasFactors为1时因子集合必须存在)")
     @JsonInclude(value = Include.NON_NULL)
     private List<Factor> factorList;
+
+	private List<FactorVO> factorVOList;
     /**
      * 图片地址
      */
+	@ApiModelProperty("图片地址")
     @JsonInclude(value = Include.NON_NULL)
     private String logoUrl;
 
     /**
      * 承保公司列表
      */
+	@ApiModelProperty("承保公司列表")
     @JsonInclude(value = Include.NON_NULL)
     private List<InusureCompanyDTO> inusureCompanyList;
 
     /**
      * 销售区域名称列表, 逗号分隔的城市列表
      */
+	@ApiModelProperty("销售区域名称列表, 逗号分隔的城市列表")
     @JsonInclude(value = Include.NON_NULL)
     private String onsaleAreas;
 
     /**
      *  条款文件名
      */
+	@ApiModelProperty("条款文件名")
     @JsonInclude(value = Include.NON_NULL)
     private String clauseFileName;
 
     /**
      * 条款文件下载url
      */
+	@ApiModelProperty("条款文件下载url")
     @JsonInclude(value = Include.NON_NULL)
     private String clauseFileUrl;
 	/**
 	 * 是否还有附加险 0-不含附加险，1-含有附加险
 	 */
+	@ApiModelProperty("是否还有附加险 0-不含附加险，1-含有附加险")
 	private String hasAttachRisk;
     /**
      * 方案列表
      */
+	@ApiModelProperty("方案列表")
     @JsonInclude(value = Include.NON_NULL)
-    private List<ProgramInfoBean> progromList;
-    
+    private List<ProgramInfoBean> programList;
+	/**
+     * 销售属性列表
+     */
+	@ApiModelProperty("销售属性列表")
+    @JsonInclude(value = Include.NON_NULL)
+	private List<RuleDTO> ruleList;
+
+	public String getProductType() {
+		return productType;
+	}
+
+	public void setProductType(String productType) {
+		this.productType = productType;
+	}
+
+	public List<RuleDTO> getRuleList() {
+		return ruleList;
+	}
+
+	public void setRuleList(List<RuleDTO> ruleList) {
+		this.ruleList = ruleList;
+	}
 
 	/**
 	 * @return the hasAttachRisk
@@ -109,19 +149,12 @@ public class ProductInfoDTO {
 	public void setCode(String code) {
 		this.code = code;
 	}
-
-	/**
-	 * @return the progList
-	 */
-	public List<ProgramInfoBean> getProgromList() {
-		return progromList;
+	public List<ProgramInfoBean> getProgramList() {
+		return programList;
 	}
 
-	/**
-	 * @param progList the progList to set
-	 */
-	public void setProgromList(List<ProgramInfoBean> progromList) {
-		this.progromList = progromList;
+	public void setProgramList(List<ProgramInfoBean> programList) {
+		this.programList = programList;
 	}
 
 	public String getName() {
@@ -216,5 +249,12 @@ public class ProductInfoDTO {
 	public void setFactorList(List<Factor> factorList) {
 		this.factorList = factorList;
 	}
-	
+
+	public List<FactorVO> getFactorVOList() {
+		return factorVOList;
+	}
+
+	public void setFactorVOList(List<FactorVO> factorVOList) {
+		this.factorVOList = factorVOList;
+	}
 }

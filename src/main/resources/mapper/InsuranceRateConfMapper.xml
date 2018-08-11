@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.InsuranceRateConfMapper">
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.InsuranceRateConf">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="rate_code" jdbcType="VARCHAR" property="rateCode" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="risk_code" jdbcType="VARCHAR" property="riskCode" />
+    <result column="risk_name" jdbcType="VARCHAR" property="riskName" />
+    <result column="basic_insurance_amount" jdbcType="DOUBLE" property="basicInsuranceAmount" />
+    <result column="currency" jdbcType="VARCHAR" property="currency" />
+    <result column="rate" jdbcType="DOUBLE" property="rate" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  
+  <!--<resultMap id="lifeRateVO" type="com.jt.product.entity.vo.life.LifeRateVO">
+    &lt;!&ndash;
+      WARNING - @mbg.generated
+    &ndash;&gt;
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="risk_code" jdbcType="VARCHAR" property="riskCode" />
+    <result column="risk_name" jdbcType="VARCHAR" property="riskName" />
+    <result column="rule_info" jdbcType="VARCHAR" property="ruleInfo" />
+    <result column="basic_insurance_amount" jdbcType="DOUBLE" property="basicInsuranceAmount" />
+    <result column="rate" jdbcType="DOUBLE" property="rate" />
+  </resultMap>-->
+  
+  <select id="selectByRateCode" parameterType="string" resultMap="BaseResultMap">
+  	SELECT *
+  	FROM t_insurance_rate_conf
+  	WHERE rate_code = #{rateCode}
+  </select>
+  <select id="selectByProductCode" parameterType="string" resultMap="BaseResultMap">
+  	SELECT *
+  	FROM t_insurance_rate_conf
+  	WHERE product_code = #{productCode}
+  </select>
+  <delete id="delByProductCode" parameterType="string">
+  	DELETE
+  	FROM t_insurance_rate_conf
+  	WHERE product_code = #{productCode}
+  </delete>
+  <!-- 寿险费率配置页面回显数据
+  <select id="selectRateInfoByProductCode"  parameterType="string" resultMap="lifeRateVO">
+  	SELECT 
+  		r.product_code,r.risk_code,r.risk_name,r.basic_insurance_amount,r.rate,p.rule_info
+	FROM
+	 	t_insurance_rate_conf  r ,t_product_rule_rel p
+	WHERE 
+		r.product_code = p.product_code
+	AND  
+		r.rate_code = p.rule_values_param
+	AND  
+		r.product_code =#{productCode}
+  </select>-->
+</mapper>

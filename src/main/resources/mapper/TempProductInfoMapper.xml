@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.plt.product.mapper.TempProductInfoMapper">
+  <resultMap id="BaseResultMap" type="com.jt.plt.product.entity.TempProductInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="creat_time" jdbcType="DATE" property="creatTime" />
+    <result column="product_info" jdbcType="LONGVARCHAR" property="productInfo" />
+  </resultMap>
+  <select id="selectByProductCode" resultMap="BaseResultMap">
+  		select *
+  		from t_temp_product_info
+  		where product_code =#{productCode}
+  </select>
+</mapper>
